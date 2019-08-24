@@ -16,7 +16,7 @@ Phase 1 project for DigitalCrafts - an application to find new friends in your a
 - InstaGram for user information
 - Method of determining age of last fix
 
-## [Project Trello Board](https://trello.com/b/UMDGQ66p/friendgen)
+## [Project Trello Board](https://trello.com/b/LyvdmQbp/friendgen)
 
 ## Libraries Used
 - Bootstrap
