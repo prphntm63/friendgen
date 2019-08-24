@@ -49,7 +49,6 @@ $(document).ready(function() {
         .catch(function(error) {
             console.error("Error adding document: ", error);
         });
-
     }
 
     function getUserFromDb() {
@@ -68,7 +67,29 @@ $(document).ready(function() {
             console.log("Error getting documents: ", error);
         });
 
-        }
+
+    }
+
+    /*
+    List of functions - 
+        * getUser - gets FB_ID, FB_Likes, Location, LoginTime
+
+        * loadUser - checks to see if user with FB_ID exists
+            * If yes, 
+                * fetches likes 
+                * fetches location
+                * fetches last Login
+                * updates DB entry
+            * If no, 
+                * fetches FB_user
+                * fetches likes
+                * fetches location
+                * fetches last_login
+                * creates DB entry
+        
+        * compareUser - returns a filtered list of all users with at least one common like
+
+    */
 
     
     
