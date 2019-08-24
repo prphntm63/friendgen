@@ -11,12 +11,13 @@ Phase 1 project for DigitalCrafts - an application to find new friends in your a
 - Andy Nguyen
 
 ## APIs used
-- Firebase for user data
+- Firebase for DB Storage
 - IP Geolocation service
-- InstaGram for user information
+- Facebook / Graph for user information
 - Method of determining age of last fix
 
 ## [Project Trello Board](https://trello.com/b/LyvdmQbp/friendgen)
+- Owned by Jeff
 
 ## Libraries Used
 - Bootstrap
@@ -25,6 +26,6 @@ Phase 1 project for DigitalCrafts - an application to find new friends in your a
 ## Schedule
 - Day 1: Assignments
   - Matt: Firebase (database)
-  - Andy: Site Design (Bootstrap)
-  - Pia: User Instagram Data and Matching Algorithm (IG API)
+  - Andy: Site Design (Bootstrap) / Graph API Login
+  - Pia: User FB Data and Matching Algorithm (Graph API)
   - Jeff: Finding User Location (IP Location API)
