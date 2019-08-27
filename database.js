@@ -9,72 +9,118 @@ $(document).ready(function() {
   
   var db = firebase.firestore();
 
-    $('#addInfo').on('click', writeUserToDb)
-    $('#getUser').on('click', getUserFromDb)
+    $('#addInfo').on('click', clickToUpdateUser)
+    $('#getUser').on('click', clickToGetUser)
+    $('#compareUser').on('click', clickToCompareUser)
 
-    function getInfo() {
+    function clickToUpdateUser() {
+        let userData = getFormInfo();
+        updateUserInDb(userData);
+    }
+
+    function clickToGetUser() {
+        let userData = getFormInfo();
+        getUserFromDb(userData);
+    }
+
+    function clickToCompareUser() {
+        let userData = getFormInfo();
+        compareUserInDb(userData);
+    }
+
+    function getFormInfo() {
         let fb_id = $('#fb_id').val()
         let lat = $('#location_lat').val()
         let lon = $('#location_lon').val()
         let interest = $('#interest').val()
 
         return {
-            "fb_id":fb_id,
+            "id":fb_id,
             "lat":lat,
             "lon":lon,
-            "interest":interest
+            "interest": interest
         }
 
     }
 
-    function writeUserToDb() {
-        let info = getInfo()
-        db.collection("users").add({
-            id: {
-                fb_id : info.fb_id,
-                ig_id: 'TEST_IG_USER_2'
-            },
-            likes: {
-                fb: ['dogs', 'cats', 'horses'],
-                ig: ['instagram', 'widgets']
-            },
+    function updateUserInDb(userData) {
+        // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests}
+
+        console.log('Updating User...')
+
+        db.collection("users").doc(userData.id)
+        .set({
+            likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
+            // likes : userData.interest,
             location: {
-                lat: 456789,
-                lon: 987654
+                lat: userData.lat,
+                lon: userData.lon
             }
+        }, {merge:true})
+        .then(querySnapshot => {
+            console.log('Done!')
         })
-        .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
+        .catch(errorSnapshot => {
+            console.log('Error! - ')
+            console.log(errorSnapshot)
         })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
+
     }
 
-    function getUserFromDb() {
+    function getUserFromDb(userData) {
         console.log('Getting User...')
-        let info = getInfo();
 
-        db.collection("users").where("id.fb_id", "==", info.fb_id)
+        db.collection("users").doc(userData.id)
         .get()
-        .then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-            });
+        .then(function(doc) {
+            console.log("Done!")
+            console.log(doc.data())
         })
         .catch(function(error) {
             console.log("Error getting documents: ", error);
         });
 
+    }
 
+    function compareUserInDb(userData) {
+        console.log('Matching Users ...')
+
+        db.collection("users").doc(userData.id)
+        .get()
+        .then(doc => {
+            let userDocument = doc.data();
+            return userDocument.likes
+        })
+        .then(likes => {
+            var matchingUsers = {}
+            likes.forEach(like => {
+                db.collection("users").where("likes","array-contains",like).get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(value => {
+                        if (matchingUsers[value.id] && value.id != userData.id) {
+                            matchingUsers[value.id].push(like) 
+                        } else if (value.id != userData.id) {
+                            matchingUsers[value.id] = [like]
+                        }
+                    })
+                    return
+                })
+                
+            })
+            return matchingUsers
+        })
+        .then(matchingUsers => {
+            console.log('Done!')
+            console.log(matchingUsers)
+        })
     }
 
     /*
     List of functions - 
-        * getUser - gets FB_ID, FB_Likes, Location, LoginTime
+        * getUserFromDb(userObject) - gets FB_ID, FB_Likes, Location, LoginTime
+            * args: userObject - {*"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests}
 
-        * loadUser - checks to see if user with FB_ID exists
+        * updateUserInDb(userObject) - checks to see if user with FB_ID exists
             * If yes, 
                 * fetches likes 
                 * fetches location
@@ -86,8 +132,10 @@ $(document).ready(function() {
                 * fetches location
                 * fetches last_login
                 * creates DB entry
+            * args: {*"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests}
         
-        * compareUser - returns a filtered list of all users with at least one common like
+        * compareUserInDb(userObject) - returns a filtered list of all users with at least one common like
+            * args: {*"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests}
 
     */
 
