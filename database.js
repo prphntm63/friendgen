@@ -77,7 +77,7 @@ $(document).ready(function() {
                 lon: userData.lon
             },
             lastFix : firebase.firestore.Timestamp.now(),
-            profilePic: userData.profilePic
+            dataURL: userData.dataURL
         }, {merge:true})
         .then(querySnapshot => {
             console.log('Done!')
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
     }
 
-    function getUserFromDb(userData) {
+    function getUserFromDb(userData, userDataFunction) {
         console.log('Getting User...')
 
         db.collection("users").doc(userData.id)
@@ -97,6 +97,7 @@ $(document).ready(function() {
         .then(function(doc) {
             console.log("Done!")
             console.log(doc.data())
+            userDataFunction(doc.data())
         })
         .catch(function(error) {
             console.log("Error getting documents: ", error);
@@ -104,7 +105,7 @@ $(document).ready(function() {
 
     }
 
-    function compareUserInDb(userData) {
+    function compareUserInDb(userData, userDataFunction) {
         let maxTimeout = 100000000; //Seconds for time fix
 
         console.log('Matching Users ...')
@@ -138,6 +139,7 @@ $(document).ready(function() {
         .then(matchingUsers => {
             console.log('Done!')
             console.log(matchingUsers)
+            userDataFunction(matchingUsers)
         })
     }
 
