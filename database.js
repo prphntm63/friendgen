@@ -1,18 +1,7 @@
 $(document).ready(function() {
-
-    // Initialize Cloud Firestore through Firebase
-    firebase.initializeApp({
-        apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
-        // authDomain: '### FIREBASE AUTH DOMAIN ###',
-        projectId: 'friendgen'
-    });
-  
-  var db = firebase.firestore();
-
     $('#addInfo').on('click', clickToUpdateUser)
     $('#getUser').on('click', clickToGetUser)
     $('#compareUser').on('click', clickToCompareUser)
-
     function clickToUpdateUser() {
         let userData = getFormInfo();
         updateUserInDb(userData);
@@ -27,6 +16,15 @@ $(document).ready(function() {
         let userData = getFormInfo();
         compareUserInDb(userData);
     }
+
+    // Initialize Cloud Firestore through Firebase
+    firebase.initializeApp({
+        apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
+        // authDomain: '### FIREBASE AUTH DOMAIN ###',
+        projectId: 'friendgen'
+    });
+  
+    var db = firebase.firestore();
 
     function getFormInfo() {
         let fb_id = $('#fb_id').val()
@@ -43,8 +41,30 @@ $(document).ready(function() {
 
     }
 
+    function getEncodedProfilePic(downloadURL) {
+        if (location.hostname === 'localhost') {
+            downloadURL = "https://cors-anywhere.herokuapp.com/" + downloadURL
+        }
+        
+        var xmlHTTP = new XMLHttpRequest();
+        xmlHTTP.open('POST',downloadURL,true);
+        xmlHTTP.responseType = 'arraybuffer';
+        xmlHTTP.onload = function(e) {
+            var arr = new Uint8Array(this.response)
+            var raw = String.fromCharCode.apply(null,arr)
+            var b64 = btoa(raw)
+            var dataURL='data:image/jpeg;base64,'+b64
+
+            // $("#testImage").attr('src', dataURL)
+
+            return dataURL // Use this like `<img src="${getEncodedProfilePic(downloadURL)"}>`
+        }
+        xmlHTTP.send();
+    
+    }
+
     function updateUserInDb(userData) {
-        // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests}
+        // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests, "profilePic":64-bit encoded image data}
 
         console.log('Updating User...')
 
@@ -55,7 +75,9 @@ $(document).ready(function() {
             location: {
                 lat: userData.lat,
                 lon: userData.lon
-            }
+            },
+            lastFix : firebase.firestore.Timestamp.now(),
+            profilePic: userData.profilePic
         }, {merge:true})
         .then(querySnapshot => {
             console.log('Done!')
@@ -83,24 +105,28 @@ $(document).ready(function() {
     }
 
     function compareUserInDb(userData) {
+        let maxTimeout = 100000000; //Seconds for time fix
+
         console.log('Matching Users ...')
 
         db.collection("users").doc(userData.id)
         .get()
         .then(doc => {
             let userDocument = doc.data();
-            return userDocument.likes
+            return userDocument
         })
-        .then(likes => {
+        .then(userDocument => {
             var matchingUsers = {}
-            likes.forEach(like => {
+            userDocument.likes.forEach(like => {
                 db.collection("users").where("likes","array-contains",like).get()
                 .then(querySnapshot => {
                     querySnapshot.forEach(value => {
-                        if (matchingUsers[value.id] && value.id != userData.id) {
-                            matchingUsers[value.id].push(like) 
-                        } else if (value.id != userData.id) {
-                            matchingUsers[value.id] = [like]
+                        if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
+                            if (matchingUsers[value.id] && value.id != userData.id) {
+                                matchingUsers[value.id].push(like) 
+                            } else if (value.id != userData.id) {
+                                matchingUsers[value.id] = [like]
+                            }
                         }
                     })
                     return
