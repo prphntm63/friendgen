@@ -1,38 +1,4 @@
-$(document).ready(function() {
-    $('#addInfo').on('click', clickToUpdateUser)
-    $('#getUser').on('click', clickToGetUser)
-    $('#compareUser').on('click', clickToCompareUser)
-
-    function clickToUpdateUser() {
-        let userData = getFormInfo();
-        updateUserInDb(userData);
-    }
-
-    function clickToGetUser() {
-        let userData = getFormInfo();
-        getUserFromDb(userData);
-    }
-
-    function clickToCompareUser() {
-        let userData = getFormInfo();
-        const thePromise = compareUserInDb(userData)
-        console.log(compareUserInDb(userData)['[[PromiseStatus]]'], compareUserInDb(userData));
-    }
-
-    function getFormInfo() {
-        let fb_id = $('#fb_id').val()
-        let lat = $('#location_lat').val()
-        let lon = $('#location_lon').val()
-        let interest = $('#interest').val()
-
-        return {
-            "id":fb_id,
-            "lat":lat,
-            "lon":lon,
-            "interest": interest
-        }
-    }
-
+;(function() {
     // Initialize Cloud Firestore through Firebase
     firebase.initializeApp({
         apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
@@ -42,15 +8,16 @@ $(document).ready(function() {
   
     var db = firebase.firestore();
 
-    function updateUserInDb(userData) {
+    function updateUserInfo(userData) {
         // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests, "profilePic":64-bit encoded image data}
 
         console.log('Updating User...')
 
         return db.collection("users").doc(userData.id)
         .set({
-            likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
-            // likes : userData.interest,
+            // likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
+            likes : userData.likes,
+            categories : userData.categories,
             location: {
                 lat: userData.lat,
                 lon: userData.lon
@@ -62,16 +29,35 @@ $(document).ready(function() {
             console.log('Done!')
         })
         .catch(errorSnapshot => {
-            console.log('Error! - ')
+            console.log('Error creating or updating user! - ')
             console.log(errorSnapshot)
         })
+    }
 
+    function updateUserStatus(userData) {
+        console.log('Updating User...')
+
+        return db.collection("users").doc(userData.id)
+        .update({
+            location: {
+                lat: userData.lat,
+                lon: userData.lon
+            },
+            lastFix : firebase.firestore.Timestamp.now()
+        })
+        .then(data => {
+            console.log("Done!")
+        })
+        .catch(errorSnapshot => {
+            console.log('Error updating user status! - ')
+            console.log(errorSnapshot)
+        })
     }
 
     function getUserFromDb(userData, userDataFunction) {
         console.log('Getting User...')
 
-        db.collection("users").doc(userData.id)
+        return db.collection("users").doc(userData.id)
         .get()
         .then(function(doc) {
             console.log("Done!")
@@ -101,15 +87,43 @@ $(document).ready(function() {
                     querySnapshot.forEach(value => {
                         if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
                             if (matchingUsers[value.id] && value.id != userData.id) {
-                                matchingUsers[value.id].push(like) 
+                                if (!matchingUsers[value.id].likes) {
+                                    matchingUsers[value.id].likes = [like]
+                                } else {
+                                    matchingUsers[value.id].likes.push(like) 
+                                } 
                             } else if (value.id != userData.id) {
-                                matchingUsers[value.id] = [like]
+                                matchingUsers[value.id] = {}
+                                matchingUsers[value.id].likes = [like]
                             }
                         }
                     })
                     return
                 })
                 
+            })
+            return [userDocument, matchingUsers]
+        })
+        .then(function([userDocument, matchingUsers]) {
+            userDocument.categories.forEach(category => {
+                db.collection("users").where("categories","array-contains",category).get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(value => {
+                        if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
+                            if (matchingUsers[value.id] && value.id != userData.id) {
+                                if (!matchingUsers[value.id].categories) {
+                                    matchingUsers[value.id].categories = [category]
+                                } else {
+                                    matchingUsers[value.id].categories.push(category) 
+                                }
+                            } else if (value.id != userData.id) {
+                                matchingUsers[value.id] = {}
+                                matchingUsers[value.id].categories = [category]
+                            }
+                        }
+                    })
+                    return
+                })
             })
             return matchingUsers
         })
@@ -123,6 +137,12 @@ $(document).ready(function() {
         })
 
     }
+
+    window.DB = window.DB || {}
+    window.DB.updateUserInfo = updateUserInfo
+    window.DB.updateUserStatus = updateUserStatus
+    window.DB.getUser = getUserFromDb
+    window.DB.compareUser = compareUserInDb
 
     /*
     List of functions - 
@@ -150,4 +170,4 @@ $(document).ready(function() {
 
     
     
-})
+})();
