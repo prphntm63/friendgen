@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-firestore.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="database.js"></script>
+    <title>TestPage</title>
+</head>
+<body>
+    <label for="fb_id">Facebook ID</label>
+    <input type="text" id='fb_id'>
+    <br>
+    <label for="location_lat">Latitude</label>
+    <input type="number" id='location_lat'>
+    <br>
+    <label for="location_lon">Longitude</label>
+    <input type="number" id='location_lon'>
+    <br>
+    <label for="like">New Interest</label>
+    <input type="text" id='interest'>
+    <br>
+    <button type="button" id="addInfo">Add User Info</button>
+    <br>
+    <button type="button" id='getUser'>Get User from DB</button>
+    <br>
+    <button type="button" id='compareUser'>Compare User from DB</button>
+    <br>
+    <img id='testImage'>
+</body>
+</html>
