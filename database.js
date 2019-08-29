@@ -2,6 +2,7 @@ $(document).ready(function() {
     $('#addInfo').on('click', clickToUpdateUser)
     $('#getUser').on('click', clickToGetUser)
     $('#compareUser').on('click', clickToCompareUser)
+
     function clickToUpdateUser() {
         let userData = getFormInfo();
         updateUserInDb(userData);
@@ -14,17 +15,9 @@ $(document).ready(function() {
 
     function clickToCompareUser() {
         let userData = getFormInfo();
-        compareUserInDb(userData);
+        const thePromise = compareUserInDb(userData)
+        console.log(compareUserInDb(userData)['[[PromiseStatus]]'], compareUserInDb(userData));
     }
-
-    // Initialize Cloud Firestore through Firebase
-    firebase.initializeApp({
-        apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
-        // authDomain: '### FIREBASE AUTH DOMAIN ###',
-        projectId: 'friendgen'
-    });
-  
-    var db = firebase.firestore();
 
     function getFormInfo() {
         let fb_id = $('#fb_id').val()
@@ -38,37 +31,23 @@ $(document).ready(function() {
             "lon":lon,
             "interest": interest
         }
-
     }
 
-    function getEncodedProfilePic(downloadURL) {
-        if (location.hostname === 'localhost') {
-            downloadURL = "https://cors-anywhere.herokuapp.com/" + downloadURL
-        }
-        
-        var xmlHTTP = new XMLHttpRequest();
-        xmlHTTP.open('POST',downloadURL,true);
-        xmlHTTP.responseType = 'arraybuffer';
-        xmlHTTP.onload = function(e) {
-            var arr = new Uint8Array(this.response)
-            var raw = String.fromCharCode.apply(null,arr)
-            var b64 = btoa(raw)
-            var dataURL='data:image/jpeg;base64,'+b64
-
-            // $("#testImage").attr('src', dataURL)
-
-            return dataURL // Use this like `<img src="${getEncodedProfilePic(downloadURL)"}>`
-        }
-        xmlHTTP.send();
-    
-    }
+    // Initialize Cloud Firestore through Firebase
+    firebase.initializeApp({
+        apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
+        // authDomain: '### FIREBASE AUTH DOMAIN ###',
+        projectId: 'friendgen'
+    });
+  
+    var db = firebase.firestore();
 
     function updateUserInDb(userData) {
         // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests, "profilePic":64-bit encoded image data}
 
         console.log('Updating User...')
 
-        db.collection("users").doc(userData.id)
+        return db.collection("users").doc(userData.id)
         .set({
             likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
             // likes : userData.interest,
@@ -97,20 +76,18 @@ $(document).ready(function() {
         .then(function(doc) {
             console.log("Done!")
             console.log(doc.data())
-            userDataFunction(doc.data())
+            return doc.data()
         })
         .catch(function(error) {
             console.log("Error getting documents: ", error);
         });
-
     }
 
-    function compareUserInDb(userData, userDataFunction) {
+    function compareUserInDb(userData) {
         let maxTimeout = 100000000; //Seconds for time fix
-
         console.log('Matching Users ...')
 
-        db.collection("users").doc(userData.id)
+        return db.collection("users").doc(userData.id)
         .get()
         .then(doc => {
             let userDocument = doc.data();
@@ -139,8 +116,12 @@ $(document).ready(function() {
         .then(matchingUsers => {
             console.log('Done!')
             console.log(matchingUsers)
-            userDataFunction(matchingUsers)
+            return matchingUsers
         })
+        .catch(function(error) {
+            console.log("Error matching users: ", error);
+        })
+
     }
 
     /*
