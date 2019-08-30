@@ -20,7 +20,8 @@ function clickLogin(){
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h5 id="userName" class="card-title" style="font-weight: bold">${name}</h5>
+                  
+                  <h5 id="userName" class="card-title" style="font-weight: bold">User: ${name}</h5>
                   <p id="userLikes" class="card-text">${likes.join(', ')}</p>
                   <div style="display: flex">
                   
@@ -57,7 +58,7 @@ function clickLogin(){
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                 <h2 style="text-align: center"><b>${matchedUsers[0].name}</b></h2>
-                                <h3>${matchedUsers[0].score}</h3>
+                                <h4>Sore: ${matchedUsers[0].score}</h4>
                                 <p>${matchedUsers[0].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
@@ -67,7 +68,7 @@ function clickLogin(){
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                 <h2 style="text-align: center"><b>${matchedUsers[1].name}</b></h2>
-                                <h3>${matchedUsers[1].score}</h3>
+                                <h4>Score: ${matchedUsers[1].score}</h4>
                                 <p>${matchedUsers[1].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
@@ -77,7 +78,7 @@ function clickLogin(){
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                 <h2 style="text-align: center"><b>${matchedUsers[2].name}</b></h2>
-                                <h3>${matchedUsers[2].score}</h3>
+                                <h4>Score: ${matchedUsers[2].score}</h4>
                                 <p>${matchedUsers[2].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
@@ -87,7 +88,7 @@ function clickLogin(){
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                 <h2 style="text-align: center"><b>${matchedUsers[3].name}</b></h2>
-                                <h3>${matchedUsers[3].score}</h3>
+                                <h4>Score: ${matchedUsers[3].score}</h4>
                                 <p>${matchedUsers[3].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
