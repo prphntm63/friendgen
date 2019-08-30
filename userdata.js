@@ -1,7 +1,7 @@
 ;let matchingUsers = [
     {
         "id":'faceBook_id',
-        "name":"matt",
+        "name":"MATT",
         "score":92,
         "matchingCategories":[
             "category1",
@@ -16,7 +16,7 @@
     },
     {
         "id":'faceBook_id',
-        "name":"jon",
+        "name":"JON",
         "score":93,
         "matchingCategories":[
             "category1",
@@ -31,8 +31,23 @@
     },
     {
         "id":'faceBook_id',
-        "name":"james",
+        "name":"JAMES",
         "score":98,
+        "matchingCategories":[
+            "category1",
+            "category2",
+            "category3"
+        ],
+        "matchingLikes":[
+            "like1",
+            "like2",
+            "like3"
+        ]
+    },
+    {
+        "id":'faceBook_id',
+        "name":"JIMMY",
+        "score":82,
         "matchingCategories":[
             "category1",
             "category2",

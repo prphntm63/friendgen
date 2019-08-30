@@ -37,39 +37,28 @@ function clickLogin(){
             
         }
 
-        mapMatchedUsers(matchingUsers)
-        function mapMatchedUsers(matchedUsers){
-            matchedUsers.map(returnMatched).join("")
-        }
-
-  
-        function returnMatched(users){
-           
-            scoreArray.push(users.score)
-           
-           
-        }
-        console.log(scoreArray)
+      
+      
         var sortedScore = matchingUsers.sort((a, b) => b.score - a.score);
-        console.log(sortedScore)
-
         
 
         
+
         
-        makeMatchDivs(returnMatched)
+        
+        makeMatchDivs(sortedScore)
         function makeMatchDivs(matchedUsers){
-            for(var i = 0; i < sortedScore.length; i++){
-                
-            }
+           console.log(matchedUsers)
+            
           
             let htmlOut = `
             <div class="carousel-item active">
             <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                <h5 style="text-align: center">${matchingUsers[0].name}</h5>
-                                <p>${matchingUsers[0].matchingLikes.join(", ")}</p>
+                                <h2 style="text-align: center"><b>${matchedUsers[0].name}</b></h2>
+                                <h3>${matchedUsers[0].score}</h3>
+                                <p>${matchedUsers[0].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
           </div>
@@ -77,8 +66,9 @@ function clickLogin(){
             <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                <h5 style="text-align: center">User 2</h5>
-                                <p>Likes likes likes</p>
+                                <h2 style="text-align: center"><b>${matchedUsers[1].name}</b></h2>
+                                <h3>${matchedUsers[1].score}</h3>
+                                <p>${matchedUsers[1].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
           </div>
@@ -86,8 +76,9 @@ function clickLogin(){
             <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                <h5 style="text-align: center">User 2</h5>
-                                <p>Likes likes likes</p>
+                                <h2 style="text-align: center"><b>${matchedUsers[2].name}</b></h2>
+                                <h3>${matchedUsers[2].score}</h3>
+                                <p>${matchedUsers[2].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
           </div>
@@ -95,8 +86,9 @@ function clickLogin(){
             <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
                 <div class="carousel-caption d-none d-md-block" >
                         <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                <h5 style="text-align: center">User 2</h5>
-                                <p>Likes likes likes</p>
+                                <h2 style="text-align: center"><b>${matchedUsers[3].name}</b></h2>
+                                <h3>${matchedUsers[3].score}</h3>
+                                <p>${matchedUsers[3].matchingLikes.join(", ")}</p>
                             </div>
                 </div>
           </div>
@@ -108,6 +100,7 @@ function clickLogin(){
             newCarousel.innerHTML = htmlOut
             document.getElementById("carousel-inner").innerHTML = ''
             document.getElementById("carousel-inner").appendChild(newCarousel)
+            
         }
 
        
