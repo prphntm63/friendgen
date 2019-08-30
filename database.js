@@ -54,14 +54,14 @@
         })
     }
 
-    function getUserFromDb(userData, userDataFunction) {
+    function getUserFromDb(userData) {
         console.log('Getting User...')
 
         return db.collection("users").doc(userData.id)
         .get()
         .then(function(doc) {
             console.log("Done!")
-            console.log(doc.data())
+            // console.log(doc.data())
             return doc.data()
         })
         .catch(function(error) {
@@ -73,70 +73,206 @@
         let maxTimeout = 100000000; //Seconds for time fix
         console.log('Matching Users ...')
 
-        return db.collection("users").doc(userData.id)
-        .get()
-        .then(doc => {
-            let userDocument = doc.data();
-            return userDocument
-        })
-        .then(userDocument => {
-            var matchingUsers = {}
-            userDocument.likes.forEach(like => {
-                db.collection("users").where("likes","array-contains",like).get()
+        getUserFromDb(userData) //returns user object
+        .then(createMatchingUserObject) //returns empty matchingUsers + array of Like Users        
+        .then(getUsersWithSharedLikes) //returns matchingUsers
+        .then(getUsersWithSharedCategories) //returns matchingUsers
+        // .then(calculateScore) //returns matchingUsers
+        // .then(returnValue) //returns Promise
+    }
+
+    function createMatchingUserObject(userData) {
+        let matchingUsers = {
+            likes:[],
+            categories:[],
+            score:undefined
+        }
+        return [matchingUsers, userData]
+    }
+
+    function getUsersWithSharedLikes([matchingUsers, userData]) {
+        let likes = userData.likes
+        let userLikePromises = []
+        likes.forEach(like => {
+            userLikePromises.push(
+                db.collection("users")
+                .where("likes","array-contains",like)
+                .get()
                 .then(querySnapshot => {
-                    querySnapshot.forEach(value => {
-                        if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
-                            if (matchingUsers[value.id] && value.id != userData.id) {
-                                if (!matchingUsers[value.id].likes) {
-                                    matchingUsers[value.id].likes = [like]
-                                } else {
-                                    matchingUsers[value.id].likes.push(like) 
-                                } 
-                            } else if (value.id != userData.id) {
-                                matchingUsers[value.id] = {}
-                                matchingUsers[value.id].likes = [like]
-                            }
-                        }
-                    })
-                    return
+                    let queryUsers = [];
+                    querySnapshot.forEach(user => {
+                            queryUsers.push( {
+                                "id":user.id,
+                                "data":user.data()
+                            });
+                        })
+                    
+                    return {
+                        "like":like,
+                        "users":queryUsers
+                    }
                 })
-                
-            })
-            return [userDocument, matchingUsers]
-        })
-        .then(function([userDocument, matchingUsers]) {
-            userDocument.categories.forEach(category => {
-                db.collection("users").where("categories","array-contains",category).get()
-                .then(querySnapshot => {
-                    querySnapshot.forEach(value => {
-                        if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
-                            if (matchingUsers[value.id] && value.id != userData.id) {
-                                if (!matchingUsers[value.id].categories) {
-                                    matchingUsers[value.id].categories = [category]
-                                } else {
-                                    matchingUsers[value.id].categories.push(category) 
-                                }
-                            } else if (value.id != userData.id) {
-                                matchingUsers[value.id] = {}
-                                matchingUsers[value.id].categories = [category]
-                            }
-                        }
-                    })
-                    return
-                })
-            })
-            return matchingUsers
-        })
-        .then(matchingUsers => {
-            console.log('Done!')
-            console.log(matchingUsers)
-            return matchingUsers
-        })
-        .catch(function(error) {
-            console.log("Error matching users: ", error);
+            )
         })
 
+        return Promise.all(userLikePromises)
+        .then(values => {
+            values.forEach(likeResult => {
+                likeResult.users.forEach(user => {
+                    if (user.id in matchingUsers.likes) {
+                        console.log('found user')
+                        if (matchingUsers.likes[user.id].likes) {
+                            matchingUsers.likes[user.id].likes.push(likeResult.like)
+                        } else {
+                            matchingUsers.likes[user.id].likes = [likeResult.like]
+                        }
+                    } else {
+                        console.log('constructed user')
+                        matchingUsers.likes[user.id] = {}
+                        matchingUsers.likes[user.id].likes = [likeResult.like]
+                    }
+                })
+            })
+            console.log('oldFunction', matchingUsers)
+            return [matchingUsers, userData]
+        })
     }
+
+    function getUsersWithSharedCategories([matchingUsers, userData]) {
+        let categories = userData.categories
+        let userCategoryPromises = []
+        categories.forEach(category => {
+            userCategoryPromises.push(
+                db.collection("users")
+                .where("categories","array-contains",category)
+                .get()
+                .then(querySnapshot => {
+                    let queryUsers = [];
+                    querySnapshot.forEach(user => {
+                            queryUsers.push( {
+                                "id":user.id,
+                                "data":user.data()
+                            });
+                        })
+                    
+                    return {
+                        "category":category,
+                        "users":queryUsers
+                    }
+                })
+            )
+        })
+
+        return Promise.all(userCategoryPromises)
+        .then(values => {
+            values.forEach(categoryResult => {
+                categoryResult.users.forEach(user => {
+                    if (user.id in matchingUsers.categories) {
+                        console.log('found user')
+                        if (matchingUsers.categories[user.id].categories) {
+                            matchingUsers.categories[user.id].categories.push(categoryResult.category)
+                        } else {
+                            matchingUsers.categories[user.id].categories = [categoryResult.category]
+                        }
+                    } else {
+                        console.log('constructed user')
+                        matchingUsers.categories[user.id] = {}
+                        matchingUsers.categories[user.id].categories = [categoryResult.category]
+                    }
+                })
+            })
+            console.log('newFunction', matchingUsers)
+            return matchingUsers
+        })
+    }
+
+
+    
+
+    // function compareUserInDb(userData) {
+    //     let maxTimeout = 100000000; //Seconds for time fix
+    //     console.log('Matching Users ...')
+
+    //     return db.collection("users").doc(userData.id)
+    //     .get()
+    //     .then(doc => {
+    //         let userDocument = doc.data();
+    //         return userDocument
+    //     })
+    //     .then(userDocument => {
+    //         console.log("1")
+    //         var matchingUsers = {};
+    //         var userPromises = [];
+    //         userDocument.likes.forEach(like => {
+    //             db.collection("users").where("likes","array-contains",like).get()
+    //             .then(querySnapshot => {
+    //                 querySnapshot.forEach(value => {
+    //                     if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
+    //                         if (matchingUsers[value.id] && value.id != userData.id) {
+    //                             if (!matchingUsers[value.id].likes) {
+    //                                 matchingUsers[value.id].likes = [like]
+    //                             } else {
+    //                                 matchingUsers[value.id].likes.push(like) 
+    //                             } 
+    //                         } else if (value.id != userData.id) {
+    //                             matchingUsers[value.id] = {}
+    //                             matchingUsers[value.id].likes = [like]
+    //                         }
+    //                     }
+    //                 })
+    //                 console.log("2")
+    //                 return
+    //             })
+    //         })
+    //         console.log("3");
+    //         return [userDocument, matchingUsers]
+    //     })
+    //     .then(function([userDocument, matchingUsers]) {
+    //         console.log("4");
+    //         userDocument.categories.forEach(category => {
+    //             db.collection("users").where("categories","array-contains",category).get()
+    //             .then(querySnapshot => {
+    //                 querySnapshot.forEach(value => {
+    //                     if (Math.abs(userDocument.lastFix.seconds - value.data().lastFix.seconds) <= maxTimeout) {
+    //                         if (matchingUsers[value.id] && value.id != userData.id) {
+    //                             if (!matchingUsers[value.id].categories) {
+    //                                 matchingUsers[value.id].categories = [category]
+    //                             } else {
+    //                                 matchingUsers[value.id].categories.push(category) 
+    //                             }
+    //                         } else if (value.id != userData.id) {
+    //                             matchingUsers[value.id] = {}
+    //                             matchingUsers[value.id].categories = [category]
+    //                         }
+    //                     }
+    //                 })
+    //                 return 
+    //             })
+    //         })
+    //         return 
+    //     })
+    //     .then(matchingUsers => {
+    //         console.log("matchingUsers", matchingUsers)
+    //         for (var key in matchingUsers) {
+
+    //             console.log("key", key);
+    //             // let numLikes = matchingUsers[key].likes.length
+    //             // let numCategories = matchingUsers[key].categories.length
+    //             // let score = 5*numLikes + 3*numCategories
+    //             // matchingUsers[key].score = score
+    //         }
+    //         return matchingUsers
+    //     })
+    //     .then(matchingUsers => {
+    //         console.log('Done!')
+    //         console.log(matchingUsers)
+    //         return matchingUsers
+    //     })
+    //     .catch(function(error) {
+    //         console.log("Error matching users: ", error);
+    //     })
+
+    // }
 
     window.DB = window.DB || {}
     window.DB.updateUserInfo = updateUserInfo
