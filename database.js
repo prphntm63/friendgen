@@ -1,4 +1,5 @@
 ;(function() {
+
     // Initialize Cloud Firestore through Firebase
     firebase.initializeApp({
         apiKey: 'AIzaSyCKgAN9gs6md2rLBCeL5GE5AVB8mN_nO-A',
@@ -9,6 +10,7 @@
     var db = firebase.firestore();
 
     function updateUserInfo(userData) {
+
         // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests, "profilePic":64-bit encoded image data}
 
         console.log('Updating User...')
