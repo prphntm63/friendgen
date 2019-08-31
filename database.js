@@ -16,6 +16,7 @@
         return db.collection("users").doc(userData.id)
         .set({
             // likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
+            name : userData.name,
             likes : userData.likes,
             categories : userData.categories,
             location: {
