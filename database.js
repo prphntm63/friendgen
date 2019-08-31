@@ -89,6 +89,7 @@
 
     function getUsersWithSharedLikes([matchingUsers, userDataDoc]) {
         let userData = userDataDoc.data()
+        // let likes = ['cows', 'guitars']
         let likes = userData.likes
         let userLikePromises = []
         likes.forEach(like => {
@@ -145,8 +146,9 @@
     }
 
     function getUsersWithSharedCategories([matchingUsers, userDataDoc]) {
-        let userData = userDataDoc.data()
+        // let userData = userDataDoc.data()
         let categories = userData.categories
+        let categories = ['guitars']
         let userCategoryPromises = []
         categories.forEach(category => {
             userCategoryPromises.push(
@@ -233,8 +235,8 @@
 
     function calculateScore([matchingUsers, userDataDoc]) {
         matchingUsers.forEach(user => {
-            let numberSharedLikes = user.matchingLikes.length
-            let numberSharedCategories = user.matchingCategories.length
+            let numberSharedLikes = user.matchingLikes ? user.matchingLikes.length : 0
+            let numberSharedCategories = user.matchingCategories ? user.matchingCategories.length : 0
             let score = (2 * numberSharedLikes) + (5 * numberSharedCategories)
             user.score = score
         })
