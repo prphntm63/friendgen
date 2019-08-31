@@ -1,0 +1,53 @@
+body{
+    background-color:#b6c8d2;
+    padding: 0px;
+    margin: 0px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.carddiv {
+    display: flex;
+    width: 39%;
+    margin: auto;
+    margin-top: 40px;
+    text-align: center;
+   
+}
+
+h3{
+    color: rgb(255, 255, 255);
+
+	text-align: center;
+
+	opacity: 0.8;
+}
+
+h1{
+
+    text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
+    opacity: 0.9;
+    margin-bottom: -5px;
+    font-size: 50px;
+    color: black;
+}
+
+h2 {
+    text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
+    
+
+}
+
+p{
+    
+}
+
+#carouselContainer {
+    display: flex;
+    width: 600px;
+    margin: auto;
+    margin-top: 40px;
+    text-align: center;
+    margin-bottom: 60px;
+
+}
+
