@@ -33,11 +33,31 @@
     </div>
 
     <!-- Navbar. To-do: add 'edit likes' and 'logout' buttons -->
-    <nav class="navbar navbar-light bg-light">
-        <a href="" class="navbar-brand">
-            <img src="" alt="" width="30" height="30">
-            FriendGen
-        </a>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <a href="" class="navbar-brand mr-auto">
+                <img src="" alt="" width="30" height="30">
+                FriendGen
+            </a>
+        </div>
+        <div class="mx-auto order-0">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class='navbar-nav ml-auto'>
+                <li class='nav-item'>
+                    <a class="nav-link" href='#' id='editProfile'>Edit Profile</a>
+                </li>
+                <li class='nav-item'>
+                    <a class="nav-link" href="#" id='logout'>Logout</a>
+                </li>
+                <li class='nav-item'>
+                    <img src="" alt="" id='userBadge' width="30" height="30" style="margin-left: 10px; border-radius: 50%">
+                </li>
+            </ul>
+        </div>
     </nav>
 
 

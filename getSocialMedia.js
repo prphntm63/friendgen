@@ -41,7 +41,7 @@ function getFacebookData() {
         //handle FB user data
         function handleUserData(response) {
             userData = response;
-            console.log(userData)
+            // console.log(userData)
             getEncodedProfilePic(userData.picture.data.url)
         }
 
@@ -88,8 +88,12 @@ function getFacebookData() {
             //create structure object
             dbUserStructure["id"] = userData.id;
             dbUserStructure["name"] = userData.first_name;
-            dbUserStructure["likes"] = likeNames
-            dbUserStructure["categories"] = filteredLikeCategories;      
+            if (likeNames.length) {
+                dbUserStructure["likes"] = likeNames
+            }
+            if (filteredLikeCategories.length) {
+                dbUserStructure["categories"] = filteredLikeCategories;
+            }      
             dbUserStructure["dataURL"] = dataURL
             
             resolve(dbUserStructure)
