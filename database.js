@@ -226,8 +226,11 @@
         let newMatchingUsers = []
         
         matchingUsers.forEach(user => {
+            let time = 1000000;
+            if (user.lastfix) {
+                time = userData.lastFix.seconds - user.lastfix.seconds
+            }
             let distance = measure(user.location.lat, user.location.lon, userData.location.lat, userData.location.lon)
-            let time = userData.lastFix.seconds - user.lastfix.seconds
             if (distance <= maxDistance || time <= maxTimeout) {
                 newMatchingUsers.push(user)
             }
