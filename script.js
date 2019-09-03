@@ -173,7 +173,7 @@ function makeMatchDivs(matchedUsers) {
                                 <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                         <h2 style="text-align: center"><b>${user.name}</b></h2>
                                         <h4>Score: ${user.score}</h4>
-                                        <p>${user.matchingLikes.join(", ")}</p>
+                                        <p>${user.matchingLikes ? user.matchingLikes.join(", ") : ''}</p>
                                     </div>
                         </div>
                   </div>`
