@@ -3,6 +3,22 @@ $(document).ready(function() {
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
 
+    // Navbar 'edit profile' and 'logout' options
+    $('#editProfile').on('click', addLikesToUserModal)
+    $('#logout').on('click', logout)
+
+    // This snippet should allow toggle clicking instead of control click to select multiple categories
+    $("select[multiple] option").mousedown(function(){
+      var $self = $(this);
+   
+      if ($self.prop("selected"))
+             $self.prop("selected", false);
+      else
+          $self.prop("selected", true);
+   
+      return false;
+   });
+
     setLoadingScreen(false)
 })
 
@@ -16,6 +32,10 @@ function clickLogin() {
   
   getData()
   .then(displayData)
+}
+
+function logout() {
+  //This function should log out of facebook session and reload page
 }
 
 function setLoadingScreen(status) {
@@ -44,6 +64,7 @@ function getData() {
   .then(function([fbData, locationData]) {
     let userData = fbData
     window.USERID = userData.id
+    $('#userBadge').attr('src', userData.dataURL) //Set user badge in navbar to profile pic
     userData.location = {};
     userData.location.lat = locationData.coords.latitude;
     userData.location.lon = locationData.coords.longitude;
@@ -80,6 +101,8 @@ function checkForNewUser(userData) {
           setNewUserDialog()
         } else if (userLikes.length == 0 || userCategories.length ==0 ) {
           setNewUserDialog()
+        } else {
+          populateLikesInModalDialog(user.data())
         }
       } else (
         setNewUserDialog()
@@ -93,6 +116,17 @@ function checkForNewUser(userData) {
   })
 
   return newUserPromise
+}
+
+function populateLikesInModalDialog(userData) {
+  let likes = userData.likes;
+  let categories = userData.categories;
+
+  let oldText = $('#userLikesInput').val();
+  let newText = likes.join(',')
+  $('#userLikesInput').val(newText)
+
+  $('#userCategoriesInput').val(categories)
 }
 
 function makeUserDiv(userData) {
