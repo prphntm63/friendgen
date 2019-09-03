@@ -71,16 +71,20 @@ function checkForNewUser(userData) {
   let newUserPromise = new Promise(function(resolve, reject) {
     DB.getUser(userData)
     .then(user => {
-      let userData = user.data()
-      let userLikes = userData.likes
-      let userCategories = userData.categories
+      if (user.data()) {
+        let userData = user.data()
+        let userLikes = userData.likes
+        let userCategories = userData.categories
 
-      if (!userLikes || !userCategories) {
+        if (!userLikes || !userCategories) {
+          setNewUserDialog()
+        } else if (userLikes.length == 0 || userCategories.length ==0 ) {
+          setNewUserDialog()
+        }
+      } else (
         setNewUserDialog()
-      } else if (userLikes.length == 0 || userCategories.length ==0 ) {
-        setNewUserDialog()
-      }
-
+      )
+      
       return user
     })
     .then(user => {
