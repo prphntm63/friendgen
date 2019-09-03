@@ -41,6 +41,7 @@ function getFacebookData() {
         //handle FB user data
         function handleUserData(response) {
             userData = response;
+            console.log(userData)
             getEncodedProfilePic(userData.picture.data.url)
         }
 
@@ -58,7 +59,7 @@ function getFacebookData() {
                 var raw = String.fromCharCode.apply(null,arr)
                 var b64 = btoa(raw)
                 var dataURL='data:image/jpeg;base64,'+b64
-                document.getElementById('testImage').src=dataURL;
+                // document.getElementById('testImage').src=dataURL;
     
                 createDBUserStructure(dataURL);
 
@@ -72,11 +73,14 @@ function getFacebookData() {
             let likeNames =[];
             let likeCategories =[];
 
-            //loop through userData.likes.data array, push every fb page liked
-            userData.likes.data.forEach(function(likeItem){likeNames.push(likeItem.name)});
-            //loop through userData.likes.data array, push every category of fb page liked
-            userData.likes.data.forEach(function(likeItem){likeCategories.push(likeItem.category)});
-            //remove duplicate categories
+            if (userData.likes) {
+                //loop through userData.likes.data array, push every fb page liked
+                userData.likes.data.forEach(function(likeItem){likeNames.push(likeItem.name)});
+                //loop through userData.likes.data array, push every category of fb page liked
+                userData.likes.data.forEach(function(likeItem){likeCategories.push(likeItem.category)});
+                //remove duplicate categories
+            }
+
             let filteredLikeCategories = likeCategories.filter(function (item, index){
                 return likeCategories.indexOf(item) === index;            
             })
@@ -89,17 +93,18 @@ function getFacebookData() {
             dbUserStructure["dataURL"] = dataURL
             
             resolve(dbUserStructure)
-            console.log(promise1)
 
         }
 
 
     });
 
-    //emulate next function
-    promise.then(function(dbValue) {
-        console.log("dbValue", dbValue);
-    
-    });
+    return promise
+
+    // //emulate next function
+    // promise.then(function(dbValue) {
+    //     console.log("dbValue", dbValue);
+        
+    // });
 }
 

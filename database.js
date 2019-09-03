@@ -21,15 +21,13 @@
             name : userData.name,
             likes : userData.likes,
             categories : userData.categories,
-            location: {
-                lat: userData.lat,
-                lon: userData.lon
-            },
+            location: userData.location,
             lastFix : firebase.firestore.Timestamp.now(),
             dataURL: userData.dataURL
         }, {merge:true})
         .then(querySnapshot => {
-            console.log('Done!')
+            console.log('Done! - updated'+ userData.id)
+            return userData
         })
         .catch(errorSnapshot => {
             console.log('Error creating or updating user! - ')
@@ -73,13 +71,13 @@
     }
 
     function compareUserInDb(userData) {
-        let maxTimeout = 100000000; //Seconds for time fix
         console.log('Matching Users ...')
 
-        getUserFromDb(userData) //returns user object
+        return getUserFromDb(userData) //returns user object
         .then(createMatchingUserObject) //returns empty matchingUsers + array of Like Users        
         .then(getUsersWithSharedLikes) //returns matchingUsers
         .then(getUsersWithSharedCategories) //returns matchingUsers
+        .then(filterLocationLogin)
         .then(calculateScore) //returns matchingUsers
         .then(returnMatchingUser) //returns Promise
     }
@@ -91,6 +89,7 @@
 
     function getUsersWithSharedLikes([matchingUsers, userDataDoc]) {
         let userData = userDataDoc.data()
+        // let likes = ['cows', 'guitars']
         let likes = userData.likes
         let userLikePromises = []
         likes.forEach(like => {
@@ -126,7 +125,9 @@
                         if (userObject == undefined) {
                             userObject = {
                                 'id':user.id,
-                                'name':user.name,
+                                'name':user.data.name,
+                                'location':user.data.location,
+                                'lastfix':user.data.lastFix,
                                 'matchingLikes':[likeResult.like]
                             }
                             matchingUsers.push(userObject)
@@ -145,8 +146,9 @@
     }
 
     function getUsersWithSharedCategories([matchingUsers, userDataDoc]) {
-        let userData = userDataDoc.data()
+        // let userData = userDataDoc.data()
         let categories = userData.categories
+        let categories = ['guitars']
         let userCategoryPromises = []
         categories.forEach(category => {
             userCategoryPromises.push(
@@ -181,7 +183,9 @@
                         if (userObject == undefined) {
                             userObject = {
                                 'id':user.id,
-                                'name':user.name,
+                                'name':user.data.name,
+                                'location':user.data.location,
+                                'lastfix':user.data.lastfix,
                                 'matchingCategories':[categoryResult.category]
                             }
                             matchingUsers.push(userObject)
@@ -195,15 +199,44 @@
                     }
                 })
             })
-            
             return [matchingUsers, userDataDoc]
         })
     }
 
+    function filterLocationLogin([matchingUsers, userDataDoc]) {
+        let maxTimeout = 1000000000 //seconds from last login
+        let maxDistance = 1000000000 //distance in meters
+
+        function measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function
+            var R = 6378.137; // Radius of earth in KM
+            var dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
+            var dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R * c;
+            return d * 1000; // meters
+        }
+
+        let userData = userDataDoc.data()
+        let newMatchingUsers = []
+        
+        matchingUsers.forEach(user => {
+            let distance = measure(user.location.lat, user.location.lon, userData.location.lat, userData.location.lon)
+            let time = userData.lastFix.seconds - user.lastfix.seconds
+            if (distance <= maxDistance || time <= maxTimeout) {
+                newMatchingUsers.push(user)
+            }
+        })
+
+        return [newMatchingUsers, userDataDoc]
+    }
+
     function calculateScore([matchingUsers, userDataDoc]) {
         matchingUsers.forEach(user => {
-            let numberSharedLikes = user.matchingLikes.length
-            let numberSharedCategories = user.matchingCategories.length
+            let numberSharedLikes = user.matchingLikes ? user.matchingLikes.length : 0
+            let numberSharedCategories = user.matchingCategories ? user.matchingCategories.length : 0
             let score = (2 * numberSharedLikes) + (5 * numberSharedCategories)
             user.score = score
         })
@@ -212,8 +245,8 @@
 
     function returnMatchingUser([matchingUsers, userDataDoc]) {
         console.log('Done!')
-        console.log(matchingUsers)
-        return matchingUsers
+        // console.log([matchingUsers, userDataDoc])
+        return [matchingUsers, userDataDoc]
     }
 
 
