@@ -15,16 +15,19 @@
 
         console.log('Updating User...')
 
+        userData.lastFix = firebase.firestore.Timestamp.now()
+
         return db.collection("users").doc(userData.id)
-        .set({
-            // likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
-            name : userData.name,
-            likes : userData.likes,
-            categories : userData.categories,
-            location: userData.location,
-            lastFix : firebase.firestore.Timestamp.now(),
-            dataURL: userData.dataURL
-        }, {merge:true})
+        // .set({
+        //     // likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
+        //     name : userData.name,
+        //     likes : userData.likes,
+        //     categories : userData.categories,
+        //     location: userData.location,
+        //     lastFix : firebase.firestore.Timestamp.now(),
+        //     dataURL: userData.dataURL
+        // }, {merge:true})
+        .set(userData, {merge:true})
         .then(querySnapshot => {
             console.log('Done! - updated'+ userData.id)
             return userData
@@ -146,9 +149,9 @@
     }
 
     function getUsersWithSharedCategories([matchingUsers, userDataDoc]) {
-        // let userData = userDataDoc.data()
+        let userData = userDataDoc.data()
         let categories = userData.categories
-        let categories = ['guitars']
+        // let categories = ['guitars']
         let userCategoryPromises = []
         categories.forEach(category => {
             userCategoryPromises.push(
