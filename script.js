@@ -48,6 +48,7 @@ function logout() {
     $('#matchCardParentContainer').html('')
     $('#userBadge').hide()
     $('#editProfile').hide()
+
     console.log("you are now logged out")
   });
 }
