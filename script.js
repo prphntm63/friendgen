@@ -172,6 +172,7 @@ function makeUserDiv(userData) {
 }
 
 function makeMatchDivs(matchedUsers) {
+  console.log(matchedUsers)
   let firstMatchedUser = true
   let htmlOut = ``
   // console.log(matchedUsers)
