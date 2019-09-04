@@ -17,14 +17,28 @@ body{
 .navbar-dark .navbar-nav .nav-link{color:#fef648}
 
 #main-div {
+    position: absolute;
     width: 300px;
     height: 300px;
-    margin: auto;
-    margin-top: 100px;
-    padding-top: 110px;
+    margin-left: auto;
+    margin-right: auto;
+    top: 25%;
+    left: 0;
+    right: 0;
     border-radius: 100%;
     border: 3px solid gray;
     background:  #fef648;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#main-div > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -47,12 +61,14 @@ h3{
 }
 
 h1{
-
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    letter-spacing: 10px;
     text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
     opacity: 0.9;
     margin-bottom: -5px;
     font-size: 50px;
-    color: black;
+    color: #333;
 }
 
 h2 {
@@ -61,8 +77,17 @@ h2 {
 
 }
 
-p{
-    
+small {
+    font-size: 8px;
+    color: #666;
+}
+
+.badge {
+    font-size: 60%;
+}
+
+.text-shadow {
+    text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
 }
 
 #carouselContainer {
@@ -94,6 +119,27 @@ p{
     z-index: 3;
 }
 
+.carouselDiv{
+    margin-right: -20px; 
+    width: 80%; 
+    float: right;
+    
+}
+
+#photo{
+    margin: auto;
+}
+
+#cardDiv{
+    max-width: 540px;
+}
+
+.carousel-item{
+    height: 210px;
+}
+
+#carouselContainer{width: 50%;
+}
 
 
 
@@ -253,3 +299,102 @@ body {
 	right: 50px;
 	top: -90px;
 }
+
+
+
+/* This is for the new carousel */
+  
+  .revolve-container {
+    margin: 0 auto;
+    width: 400px;
+    height: 200px;
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    perspective: 1000px;
+  }
+  
+  .revolve {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+  }
+  
+  .revolve-item {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    background: white;
+    width: 400px;
+    height: 200px;
+    /* line-height: 200px; */
+    /* font-size: 5em; */
+    text-align: center;
+    color: black;
+    /* opacity: 0.95; */
+    border-radius: 10px;
+    border: 3px solid gray;
+    cursor: pointer;
+  }
+
+  .match-card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+      color: #333;
+  }
+
+  .match-image-container {
+      overflow: hidden;
+      padding: 10px;
+      width: 200px;
+  }
+
+  .match-image-container > img {
+    padding:0px;
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 10px
+  }
+
+  .leftArrow {
+    padding: 0;
+    position: absolute;
+    left: -20px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    opacity: .7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rightArrow {
+    padding: 0;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    opacity: .7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

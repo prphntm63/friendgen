@@ -2,11 +2,15 @@ $(document).ready(function() {
   
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
-    
+
+    $('#logout').hide() //Hide the user logged in buttons by default
+    $('#userBadge').hide()
+    $('#editProfile').hide()
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
     $('#logout').on('click', logout)
+    $('#login').on('click', clickLogin)
     document.getElementById('logout').style.visibility='hidden';
 
     // This snippet should allow toggle clicking instead of control click to select multiple categories
@@ -25,39 +29,36 @@ $(document).ready(function() {
 })
 
 function clickLogin() {
-
-  document.getElementById("main-div").style.display = "none"
-  document.getElementById("cardDiv").style.display = "block"
-  document.getElementById("carouselContainer").style.display = "block"
-  document.getElementById('logout').style.visibility='visible';
+  $('#main-div').hide() //Hide the main login button
   
-  setLoadingScreen(true)
+  setLoadingScreen(true) //set loading
   
-  getData()
-  .then(displayData)
+  getData() //Get user and matching users from database
+  .then(displayData) //render data
 }
 
 function logout() {
   //This function should log out of facebook session and reload page
 
   FB.logout (function(response){
-    document.getElementById("main-div").style.display = "block"
-    document.getElementById("cardDiv").style.display = "none"
-    document.getElementById("carouselContainer").style.display = "none"
-    document.getElementById('logout').style.visibility='hidden';
+    $('#login').show()
+    $('#logout').hide()
+    $('#background-wrap').show()
+    $('#main-div').show()
+    $('#matchCardParentContainer').html('')
+    $('#userBadge').hide()
+    $('#editProfile').hide()
+
     console.log("you are now logged out")
   });
 }
 
-function setLoadingScreen(status) {
+function setLoadingScreen(status) { //This function overlays (or removes) a full screen 'loading' div
   if (status) {
-      $('#loadingScreenDiv').show()
+    $('#loadingScreenDiv').show()
   } else {
     $('#loadingScreenDiv').hide()
   }
-  // Create a loading screen so user knows their request was processed
-  // Right now it shows 'Jane Doe', lol
-  
   return
 }
 
@@ -65,14 +66,13 @@ function setNewUserDialog() {
   // Create some HTML to tell user that they do not have any likes or categories set
   // and should add some or else they will get zero matches
   $('#noLikesModal').modal('show')
-  console.log('Looks like you are a new user - add some likes or you\'ll get shitty results!')
 }
 
 function getData() {
   let getFbAndLocationData = [getFacebookData(), getLocation()]
 
-  return Promise.all(getFbAndLocationData)
-  .then(function([fbData, locationData]) {
+  return Promise.all(getFbAndLocationData) //wait for both FB and location data
+  .then(function([fbData, locationData]) { //build it into the userData struct
     let userData = fbData
     window.USERID = userData.id
     $('#userBadge').attr('src', userData.dataURL) //Set user badge in navbar to profile pic
@@ -81,9 +81,9 @@ function getData() {
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
-  .then(checkForNewUser)
-  .then(DB.updateUserInfo)
-  .then(DB.compareUser)
+  .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them
+  .then(DB.updateUserInfo) //update user info from fb and location data in DB
+  .then(DB.compareUser) //compare user to others in DB and return matching users
   .catch(err => {
     console.log('Error! could not get data - ', err)
   })
@@ -93,7 +93,13 @@ function getData() {
 function displayData([matchingUsers, userDataDoc]) {
   let userData = userDataDoc.data()
 
-  makeUserDiv(userData)
+  $('#login').hide()
+  $('#logout').show()
+  $('#main-div').hide()
+  $('#userBadge').show()
+  $('#editProfile').show()
+
+  // makeUserDiv(userData)
   var sortedMatchingUsers = matchingUsers.sort((a, b) => b.score - a.score);
   makeMatchDivs(sortedMatchingUsers)
   setLoadingScreen(false)
@@ -142,12 +148,12 @@ function populateLikesInModalDialog(userData) {
   $('#userCategoriesInput').val(categories)
 }
 
-function makeUserDiv(userData) {
+function makeUserDiv(userData) { //This function currently is not used but is left intact in case it is needed in the future
   let likes = userData.likes 
   let name = userData.name
   let dataURL = userData.dataURL
   let htmlOut = `
-        <div class="card mb-3 ; " style="max-width: 540px; margin-top: 30px; border: solid 2px grey">
+        <div class="card mb-3" style=" margin-top: 30px; border: solid 2px grey">
         <div class="row no-gutters">
           <div class="col-md-4">
             <img id="testImage" src="${dataURL ? dataURL : ''}" class="card-img" alt="..." style="height: 100%">
@@ -172,54 +178,87 @@ function makeUserDiv(userData) {
 
 }
 
-function makeMatchDivs(matchedUsers) {
-  console.log(matchedUsers)
-  let firstMatchedUser = true
+function makeMatchDivs(matchedUsers) { //Create cards for matched users
   let htmlOut = ``
-  // console.log(matchedUsers)
+  let degreeDivisions = 0;
 
   if (matchedUsers.length) {
+    degreeDivisions = 360/matchedUsers.length
+    let counter = 0;
+
     matchedUsers.forEach(user => {
-      console.log(user.name, user.score)
-      htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
-                    <img class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="Third slide" style="margin: 30px">
-                        <div class="carousel-caption d-none d-md-block" >
-                                <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                        <h2 style="text-align: center"><b>${user.name}</b></h2>
-                                        <h4>Score: ${user.score}</h4>
-                                        <p>${user.matchingLikes ? user.matchingLikes.join(", ") : ''}</p>
-                                    </div>
+      htmlOut += `
+                  <div class="revolve-item" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)">
+                    <div class='leftArrow'>\⟨</div>
+                    <div class='rightArrow'>\⟩</div>
+                    <div class="match-image-container">
+                        <img src="${user.dataURL}" alt="/images/noprof.png">
+                    </div>
+                    <div class="match-card-body">
+                      <div>
+                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                      </div>
+                      <div ${user.matchingCategories ? '' : 'style="display:none"'}>
+                        <small>Your shared interests:</small>
+                        <div>
+                          ${user.matchingCategories ? user.matchingCategories.map(category => {return `<span class="badge badge-pill badge-warning">${category}</span>`}).join('') : ''}
                         </div>
-                  </div>`
-      firstMatchedUser = false;
+                      </div>
+                      <div ${user.matchingLikes ? '' : 'style="display:none"'}>
+                        <small>Your coinciding likes:</small>
+                        <div>
+                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+      `
+      counter++
     })
   } else {
-    htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
-                <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
-                    <div class="carousel-caption d-none d-md-block" >
-                            <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
-                                    <h2 style="text-align: center"><b>No Matched Users</b></h2>
-                            </div>
+    htmlOut += `
+                  <div class="revolve-item" style="transform: rotateY(0deg) translateZ(400px)">
+                    <div class="match-image-container">
+                        <img src="/images/noprof.png" alt="/images/noprof.png">
                     </div>
-                </div>`
+                    <div class="match-card-body">
+                        <h3>Sorry!</h3>
+                        <p>Looks like there's no matching users close to you right now.</p>
+                        <p>Try updating your profile or check back later!</p>
+                    </div>
+                  </div>
+    `
+
   }
 
-  let newCarousel = document.createElement('div')
-  newCarousel.innerHTML = htmlOut
-  document.getElementById("carousel-inner").innerHTML = ''
-  document.getElementById("carousel-inner").appendChild(newCarousel)
+  $('#matchCardParentContainer').html(htmlOut)
+  $(".rightArrow").on("click", { d: "n" }, rotate);
+  $(".leftArrow").on("click", { d: "p" }, rotate);
 
+  // New carousel
+  var carousel = $(".revolve"),
+    currdeg  = 0;
+  
+  function rotate(e){
+    if(e.data.d=="n" && degreeDivisions){
+      currdeg = currdeg - degreeDivisions;
+    }
+    if(e.data.d=="p" && degreeDivisions){
+      currdeg = currdeg + degreeDivisions;
+    }
+    carousel.css({
+      "-webkit-transform": "rotateY("+currdeg+"deg)",
+      "-moz-transform": "rotateY("+currdeg+"deg)",
+      "-o-transform": "rotateY("+currdeg+"deg)",
+      "transform": "rotateY("+currdeg+"deg)"
+    });
+  }
 }
 
-function addLikesToUserModal() {
+function addLikesToUserModal() { //This function simply dismisses the 'alert-no likes' modal and calls the 'change user likes' modal
     $('#noLikesModal').modal('hide')
-    
-   
-    // We need to add a method here to call DB, get user's existing likes (if any), and pre-populate the dialog. need to define catagories first tho
 
     $('#addLikesModal').modal('show')
-  
-    console.log(document.getElementById("userLikesInput").innerHTML)
 }
 
 
