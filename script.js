@@ -168,7 +168,7 @@ function makeMatchDivs(matchedUsers) {
     matchedUsers.forEach(user => {
       console.log(user.name, user.score)
       htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
-                    <img class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="Third slide" style="margin: 30px">
+                    <img class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="First slide" style="margin: 30px">
                         <div class="carousel-caption d-none d-md-block" >
                                 <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                         <h2 style="text-align: center"><b>${user.name}</b></h2>
@@ -181,7 +181,7 @@ function makeMatchDivs(matchedUsers) {
     })
   } else {
     htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
-                <img class="d-block w-25" src="images/noprof.png" alt="Third slide" style="margin: 30px">
+                <img class="d-block w-25" src="images/noprof.png" alt="First slide" style="margin: 30px">
                     <div class="carousel-caption d-none d-md-block" >
                             <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
                                     <h2 style="text-align: center"><b>No Matched Users</b></h2>
