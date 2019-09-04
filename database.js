@@ -188,7 +188,7 @@
                                 'id':user.id,
                                 'name':user.data.name,
                                 'location':user.data.location,
-                                'lastfix':user.data.lastfix,
+                                'lastfix':user.data.lastFix,
                                 'matchingCategories':[categoryResult.category]
                             }
                             matchingUsers.push(userObject)
