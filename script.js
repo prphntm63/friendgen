@@ -110,6 +110,7 @@ function checkForNewUser(userData) {
         if (!userLikes || !userCategories) {
           setNewUserDialog()
         } else if (userLikes.length == 0 || userCategories.length ==0 ) {
+          populateLikesInModalDialog(user.data())
           setNewUserDialog()
         } else {
           populateLikesInModalDialog(user.data())
@@ -171,6 +172,7 @@ function makeUserDiv(userData) {
 }
 
 function makeMatchDivs(matchedUsers) {
+  console.log(matchedUsers)
   let firstMatchedUser = true
   let htmlOut = ``
   // console.log(matchedUsers)
