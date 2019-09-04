@@ -33,7 +33,8 @@ function getFacebookData() {
             FB.api(                                
                 '/me',                             
                 'GET',                             
-                {"fields":"id,name,first_name,picture.type(large),likes{name,category}"},
+                // {"fields":"id,name,first_name,picture.type(large),likes{name,category}"},
+                {"fields":"id,name,first_name,picture.type(large)"},
                 handleUserData
             );
         }
@@ -70,31 +71,34 @@ function getFacebookData() {
 
         //create database structure from FB user data
         function createDBUserStructure (dataURL) {
-            let likeNames =[];
-            let likeCategories =[];
+            // let likeNames =[];
+            // let likeCategories =[];
 
-            if (userData.likes) {
+            // if (userData.likes) {
                 //loop through userData.likes.data array, push every fb page liked
-                userData.likes.data.forEach(function(likeItem){likeNames.push(likeItem.name)});
+                // userData.likes.data.forEach(function(likeItem){likeNames.push(likeItem.name)});
                 //loop through userData.likes.data array, push every category of fb page liked
-                userData.likes.data.forEach(function(likeItem){likeCategories.push(likeItem.category)});
+                // userData.likes.data.forEach(function(likeItem){likeCategories.push(likeItem.category)});
                 //remove duplicate categories
-            }
+            // }
 
-            let filteredLikeCategories = likeCategories.filter(function (item, index){
-                return likeCategories.indexOf(item) === index;            
-            })
+            // let filteredLikeCategories = likeCategories.filter(function (item, index){
+            //     return likeCategories.indexOf(item) === index;            
+            // })
 
             //create structure object
             dbUserStructure["id"] = userData.id;
             dbUserStructure["name"] = userData.first_name;
-            if (likeNames.length) {
-                dbUserStructure["likes"] = likeNames
-            }
-            if (filteredLikeCategories.length) {
-                dbUserStructure["categories"] = filteredLikeCategories;
-            }      
             dbUserStructure["dataURL"] = dataURL
+            // console.log('likeNames: ', likeNames)
+            // if (likeNames.length) {
+            //     dbUserStructure["likes"] = likeNames
+               
+            // }
+            // if (filteredLikeCategories.length) {
+            //     dbUserStructure["categories"] = filteredLikeCategories;
+            // }      
+           
             
             resolve(dbUserStructure)
 

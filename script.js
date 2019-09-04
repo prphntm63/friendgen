@@ -2,6 +2,7 @@ $(document).ready(function() {
   
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
+    
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
@@ -212,18 +213,27 @@ function makeMatchDivs(matchedUsers) {
 
 function addLikesToUserModal() {
     $('#noLikesModal').modal('hide')
-
+    
+   
     // We need to add a method here to call DB, get user's existing likes (if any), and pre-populate the dialog. need to define catagories first tho
 
     $('#addLikesModal').modal('show')
+  
+    console.log(document.getElementById("userLikesInput").innerHTML)
 }
+
 
 function updateUserLikesFromModal() {
     $('#addLikesModal').modal('hide')
     setLoadingScreen(true)
     let userLikesString = $('#userLikesInput').val()
-    let userLikes = userLikesString.split(',') 
-    // Need to add method here to remove leading/trailing whitespace and illegal chars
+    let userLikesRaw = userLikesString.split(',') 
+    let userLikes =[];
+    // remove leading/trailing whitespace and illegal chars
+    userLikesRaw.forEach(function(el){
+      el = el.trim().replace(/[|&;$%@"<>()+,]/g, '').toLowerCase();
+      userLikes.push(el)
+    })
     let userCategories = $('#userCategoriesInput').val()
 
     let userData = {
