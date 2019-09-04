@@ -74,10 +74,13 @@ p{
     margin-right: -20px; 
     width: 80%; 
     float: right;
-    height: 130px;
+    height: 100%;
 }
 
 #cardDiv{
     max-width: 540px;
 }
 
+.carousel-item{
+    height: 200px;
+}
