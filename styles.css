@@ -88,3 +88,6 @@ p{
 .carousel-item{
     height: 210px;
 }
+
+#carouselContainer{width: 50%;
+}
