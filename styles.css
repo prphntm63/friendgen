@@ -74,7 +74,11 @@ p{
     margin-right: -20px; 
     width: 80%; 
     float: right;
-    height: 100%;
+    
+}
+
+#photo{
+    margin: auto;
 }
 
 #cardDiv{
@@ -82,5 +86,5 @@ p{
 }
 
 .carousel-item{
-    height: 200px;
+    height: 210px;
 }

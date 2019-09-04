@@ -181,7 +181,7 @@ function makeMatchDivs(matchedUsers) {
     matchedUsers.forEach(user => {
       console.log(user.name, user.score)
       htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
-                    <img class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="First slide" style="margin: 30px">
+                    <img id="photo" class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="First slide" style="margin: 30px">
                         <div class="carousel-caption d-none d-md-block" >
                                 <div class="carouselDiv" >
                                         <h2 style="text-align: center"><b>${user.name}</b></h2>
