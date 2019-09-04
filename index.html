@@ -22,6 +22,7 @@
 
 </head>
 <body>
+      
     <!-- This is the 'loading screen' that will pop up over the page when anything is loading -->
     <div class='loading-screen' id='loadingScreenDiv'>
         <div>
@@ -33,11 +34,11 @@
     </div>
 
     <!-- Navbar. To-do: add 'edit likes' and 'logout' buttons -->
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-md navbar-dark bg-secondary">
         <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <a href="" class="navbar-brand mr-auto">
-                <img src="" alt="" width="30" height="30">
-                FriendGen
+                <img src="images/logo.png" alt="" width="40" height="40">
+                <!-- FriendGen -->
             </a>
         </div>
         <div class="mx-auto order-0">
@@ -60,12 +61,35 @@
         </div>
     </nav>
 
-
-    <div class="row" id="main-div" style="border: solid 2px #FFFAFA; display: flex; flex-direction: column; margin: auto; width: 50%; padding: 40px; border-radius: 15px; background-color: #f0ead6; margin-top: 75px">
-            <div class="col-xs-1 center-block text-center">
-            <h3 style=" margin-bottom: 20px;text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8); ">MEMBER LOGIN</h3>
-            <button onclick="clickLogin()" id="loginBtn" type="button" class="btn btn-outline-light">Login with facebook</button>
+ <!-- cloud background -->
+    <div id="background-wrap">
+            <div class="x1">
+                <div class="cloud"></div>
             </div>
+        
+            <div class="x2">
+                <div class="cloud"></div>
+            </div>
+        
+            <div class="x3">
+                <div class="cloud"></div>
+            </div>
+        
+            <div class="x4">
+                <div class="cloud"></div>
+            </div>
+        
+            <div class="x5">
+                <div class="cloud"></div>
+            </div>
+        </div>
+
+    <div class="row" id="main-div" style="display: flex; flex-direction: column;">
+
+        <div class="col-xs-1 center-block text-center">
+            <h3 style=" margin-bottom: 20px;text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8); ">USER LOGIN</h3>
+            <button onclick="clickLogin()" id="loginBtn" type="button" class="btn btn-outline-light">continue with Facebook</button>
+        </div>
     </div>
 
     <div id="cardDiv" class="carddiv" style="display: none" >
