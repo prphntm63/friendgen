@@ -27,7 +27,6 @@ $(document).ready(function() {
 function clickLogin() {
 
   document.getElementById("main-div").style.display = "none"
-  document.getElementById("background-wrap").style.display = "none"
   document.getElementById("cardDiv").style.display = "block"
   document.getElementById("carouselContainer").style.display = "block"
   document.getElementById('logout').style.visibility='visible';
@@ -43,7 +42,6 @@ function logout() {
 
   FB.logout (function(response){
     document.getElementById("main-div").style.display = "block"
-    document.getElementById("background-wrap").style.display = "block"
     document.getElementById("cardDiv").style.display = "none"
     document.getElementById("carouselContainer").style.display = "none"
     document.getElementById('logout').style.visibility='hidden';
