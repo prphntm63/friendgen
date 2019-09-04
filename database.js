@@ -131,7 +131,8 @@
                                 'name':user.data.name,
                                 'location':user.data.location,
                                 'lastfix':user.data.lastFix,
-                                'matchingLikes':[likeResult.like]
+                                'matchingLikes':[likeResult.like],
+                                'dataURL':user.data.dataURL
                             }
                             matchingUsers.push(userObject)
                         } else {
@@ -189,7 +190,8 @@
                                 'name':user.data.name,
                                 'location':user.data.location,
                                 'lastfix':user.data.lastFix,
-                                'matchingCategories':[categoryResult.category]
+                                'matchingCategories':[categoryResult.category],
+                                'dataURL':user.data.dataURL
                             }
                             matchingUsers.push(userObject)
                         } else {
