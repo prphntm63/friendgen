@@ -70,3 +70,14 @@ p{
     z-index: 3;
 }
 
+.carouselDiv{
+    margin-right: -20px; 
+    width: 80%; 
+    float: right;
+    height: 130px;
+}
+
+#cardDiv{
+    max-width: 540px;
+}
+

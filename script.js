@@ -134,7 +134,7 @@ function makeUserDiv(userData) {
   let name = userData.name
   let dataURL = userData.dataURL
   let htmlOut = `
-        <div class="card mb-3 ; " style="max-width: 540px; margin-top: 30px; border: solid 2px grey">
+        <div class="card mb-3" style=" margin-top: 30px; border: solid 2px grey">
         <div class="row no-gutters">
           <div class="col-md-4">
             <img id="testImage" src="${dataURL ? dataURL : ''}" class="card-img" alt="..." style="height: 100%">
@@ -170,7 +170,7 @@ function makeMatchDivs(matchedUsers) {
       htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
                     <img class="d-block w-25" src="${user.dataURL ? user.dataURL : ''}" alt="First slide" style="margin: 30px">
                         <div class="carousel-caption d-none d-md-block" >
-                                <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
+                                <div class="carouselDiv" >
                                         <h2 style="text-align: center"><b>${user.name}</b></h2>
                                         <h4>Score: ${user.score}</h4>
                                         <p>${user.matchingLikes ? user.matchingLikes.join(", ") : ''}</p>
@@ -183,7 +183,7 @@ function makeMatchDivs(matchedUsers) {
     htmlOut += `<div class="carousel-item ${firstMatchedUser ? 'active':''}">
                 <img class="d-block w-25" src="images/noprof.png" alt="First slide" style="margin: 30px">
                     <div class="carousel-caption d-none d-md-block" >
-                            <div style="margin-right: -20px; width: 80%; float: right; height: 130px">
+                            <div class="carouselDiv" >
                                     <h2 style="text-align: center"><b>No Matched Users</b></h2>
                             </div>
                     </div>
