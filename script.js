@@ -2,11 +2,15 @@ $(document).ready(function() {
   
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
-    
+
+    $('#logout').hide()
+    $('#userBadge').hide()
+    $('#editProfile').hide()
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
     $('#logout').on('click', logout)
+    $('#login').on('click', clickLogin)
     document.getElementById('logout').style.visibility='hidden';
 
     // This snippet should allow toggle clicking instead of control click to select multiple categories
@@ -27,7 +31,7 @@ $(document).ready(function() {
 function clickLogin() {
 
   document.getElementById("main-div").style.display = "none"
-  document.getElementById("background-wrap").style.display = "none"
+  // document.getElementById("background-wrap").style.display = "none"
   // document.getElementById("cardDiv").style.display = "block"
   // document.getElementById("carouselContainer").style.display = "block"
   document.getElementById('logout').style.visibility='visible';
@@ -42,11 +46,18 @@ function logout() {
   //This function should log out of facebook session and reload page
 
   FB.logout (function(response){
-    document.getElementById("main-div").style.display = "block"
-    document.getElementById("background-wrap").style.display = "block"
-    document.getElementById("cardDiv").style.display = "none"
-    document.getElementById("carouselContainer").style.display = "none"
-    document.getElementById('logout').style.visibility='hidden';
+    // document.getElementById("main-div").style.display = "block"
+    // document.getElementById("background-wrap").style.display = "block"
+    // // document.getElementById("cardDiv").style.display = "none"
+    // // document.getElementById("carouselContainer").style.display = "none"
+    // document.getElementById('logout').style.visibility='hidden';
+    $('#login').show()
+    $('#logout').hide()
+    $('#background-wrap').show()
+    $('#main-div').show()
+    $('#matchCardParentContainer').html('')
+    $('#userBadge').hide()
+    $('#editProfile').hide()
     console.log("you are now logged out")
   });
 }
@@ -94,6 +105,14 @@ function getData() {
 
 function displayData([matchingUsers, userDataDoc]) {
   let userData = userDataDoc.data()
+
+  $('#login').hide()
+  $('#logout').show()
+  // $('#background-wrap').show()
+  $('#main-div').hide()
+  // $('#matchCardParentContainer').html('')
+  $('#userBadge').show()
+  $('#editProfile').show()
 
   // makeUserDiv(userData)
   var sortedMatchingUsers = matchingUsers.sort((a, b) => b.score - a.score);
@@ -194,7 +213,7 @@ function makeMatchDivs(matchedUsers) {
                     </div>
                     <div class="match-card-body">
                       <div>
-                        <h3>${user.name}</h3>
+                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
                         <small>Your shared interests:</small>
@@ -205,7 +224,7 @@ function makeMatchDivs(matchedUsers) {
                       <div ${user.matchingLikes ? '' : 'style="display:none"'}>
                         <small>Your coinciding likes:</small>
                         <div>
-                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.charAt(0).toUpperCase() + like.slice(1)}</span>`}).join('') : ''}
+                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
                         </div>
                       </div>
                     </div>

@@ -62,8 +62,16 @@ h2 {
 }
 
 small {
-    font-size: 10px;
+    font-size: 8px;
     color: #666;
+}
+
+.badge {
+    font-size: 60%;
+}
+
+.text-shadow {
+    text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
 }
 
 #carouselContainer {
