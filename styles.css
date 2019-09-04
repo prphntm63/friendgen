@@ -17,14 +17,28 @@ body{
 .navbar-dark .navbar-nav .nav-link{color:#fef648}
 
 #main-div {
+    position: absolute;
     width: 300px;
     height: 300px;
-    margin: auto;
-    margin-top: 100px;
-    padding-top: 110px;
+    margin-left: auto;
+    margin-right: auto;
+    top: 25%;
+    left: 0;
+    right: 0;
     border-radius: 100%;
     border: 3px solid gray;
     background:  #fef648;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#main-div > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -47,12 +61,14 @@ h3{
 }
 
 h1{
-
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    letter-spacing: 10px;
     text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
     opacity: 0.9;
     margin-bottom: -5px;
     font-size: 50px;
-    color: black;
+    color: #333;
 }
 
 h2 {

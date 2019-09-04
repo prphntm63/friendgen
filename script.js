@@ -3,7 +3,7 @@ $(document).ready(function() {
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
 
-    $('#logout').hide()
+    $('#logout').hide() //Hide the user logged in buttons by default
     $('#userBadge').hide()
     $('#editProfile').hide()
 
@@ -29,28 +29,18 @@ $(document).ready(function() {
 })
 
 function clickLogin() {
-
-  document.getElementById("main-div").style.display = "none"
-  // document.getElementById("background-wrap").style.display = "none"
-  // document.getElementById("cardDiv").style.display = "block"
-  // document.getElementById("carouselContainer").style.display = "block"
-  document.getElementById('logout').style.visibility='visible';
+  $('#main-div').hide() //Hide the main login button
   
-  setLoadingScreen(true)
+  setLoadingScreen(true) //set loading
   
-  getData()
-  .then(displayData)
+  getData() //Get user and matching users from database
+  .then(displayData) //render data
 }
 
 function logout() {
   //This function should log out of facebook session and reload page
 
   FB.logout (function(response){
-    // document.getElementById("main-div").style.display = "block"
-    // document.getElementById("background-wrap").style.display = "block"
-    // // document.getElementById("cardDiv").style.display = "none"
-    // // document.getElementById("carouselContainer").style.display = "none"
-    // document.getElementById('logout').style.visibility='hidden';
     $('#login').show()
     $('#logout').hide()
     $('#background-wrap').show()
@@ -62,15 +52,12 @@ function logout() {
   });
 }
 
-function setLoadingScreen(status) {
+function setLoadingScreen(status) { //This function overlays (or removes) a full screen 'loading' div
   if (status) {
-      $('#loadingScreenDiv').show()
+    $('#loadingScreenDiv').show()
   } else {
     $('#loadingScreenDiv').hide()
   }
-  // Create a loading screen so user knows their request was processed
-  // Right now it shows 'Jane Doe', lol
-  
   return
 }
 
@@ -78,14 +65,13 @@ function setNewUserDialog() {
   // Create some HTML to tell user that they do not have any likes or categories set
   // and should add some or else they will get zero matches
   $('#noLikesModal').modal('show')
-  console.log('Looks like you are a new user - add some likes or you\'ll get shitty results!')
 }
 
 function getData() {
   let getFbAndLocationData = [getFacebookData(), getLocation()]
 
-  return Promise.all(getFbAndLocationData)
-  .then(function([fbData, locationData]) {
+  return Promise.all(getFbAndLocationData) //wait for both FB and location data
+  .then(function([fbData, locationData]) { //build it into the userData struct
     let userData = fbData
     window.USERID = userData.id
     $('#userBadge').attr('src', userData.dataURL) //Set user badge in navbar to profile pic
@@ -94,9 +80,9 @@ function getData() {
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
-  .then(checkForNewUser)
-  .then(DB.updateUserInfo)
-  .then(DB.compareUser)
+  .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them
+  .then(DB.updateUserInfo) //update user info from fb and location data in DB
+  .then(DB.compareUser) //compare user to others in DB and return matching users
   .catch(err => {
     console.log('Error! could not get data - ', err)
   })
@@ -108,9 +94,7 @@ function displayData([matchingUsers, userDataDoc]) {
 
   $('#login').hide()
   $('#logout').show()
-  // $('#background-wrap').show()
   $('#main-div').hide()
-  // $('#matchCardParentContainer').html('')
   $('#userBadge').show()
   $('#editProfile').show()
 
@@ -163,7 +147,7 @@ function populateLikesInModalDialog(userData) {
   $('#userCategoriesInput').val(categories)
 }
 
-function makeUserDiv(userData) {
+function makeUserDiv(userData) { //This function currently is not used but is left intact in case it is needed in the future
   let likes = userData.likes 
   let name = userData.name
   let dataURL = userData.dataURL
@@ -193,9 +177,7 @@ function makeUserDiv(userData) {
 
 }
 
-// <p>${user.matchingCategories ? user.matchingCategories.join(", ") : ''}</p>
-
-function makeMatchDivs(matchedUsers) {
+function makeMatchDivs(matchedUsers) { //Create cards for matched users
   let htmlOut = ``
   let degreeDivisions = 0;
 
@@ -249,15 +231,13 @@ function makeMatchDivs(matchedUsers) {
   }
 
   $('#matchCardParentContainer').html(htmlOut)
-  // $(".match-card-body").on("click", { d: "n" }, rotate);
-  // $(".match-image-container").on("click", { d: "p" }, rotate);
   $(".rightArrow").on("click", { d: "n" }, rotate);
   $(".leftArrow").on("click", { d: "p" }, rotate);
+
   // New carousel
   var carousel = $(".revolve"),
     currdeg  = 0;
   
-
   function rotate(e){
     if(e.data.d=="n" && degreeDivisions){
       currdeg = currdeg - degreeDivisions;
@@ -274,15 +254,10 @@ function makeMatchDivs(matchedUsers) {
   }
 }
 
-function addLikesToUserModal() {
+function addLikesToUserModal() { //This function simply dismisses the 'alert-no likes' modal and calls the 'change user likes' modal
     $('#noLikesModal').modal('hide')
-    
-   
-    // We need to add a method here to call DB, get user's existing likes (if any), and pre-populate the dialog. need to define catagories first tho
 
     $('#addLikesModal').modal('show')
-  
-    console.log(document.getElementById("userLikesInput").innerHTML)
 }
 
 
