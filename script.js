@@ -1,11 +1,12 @@
 $(document).ready(function() {
-    
+  
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
     $('#logout').on('click', logout)
+    document.getElementById('logout').style.visibility='hidden';
 
     // This snippet should allow toggle clicking instead of control click to select multiple categories
     $("select[multiple] option").mousedown(function(){
@@ -27,7 +28,8 @@ function clickLogin() {
   document.getElementById("main-div").style.display = "none"
   document.getElementById("cardDiv").style.display = "block"
   document.getElementById("carouselContainer").style.display = "block"
-
+  document.getElementById('logout').style.visibility='visible';
+  
   setLoadingScreen(true)
   
   getData()
@@ -36,6 +38,14 @@ function clickLogin() {
 
 function logout() {
   //This function should log out of facebook session and reload page
+
+  FB.logout (function(response){
+    document.getElementById("main-div").style.display = "block"
+    document.getElementById("cardDiv").style.display = "none"
+    document.getElementById("carouselContainer").style.display = "none"
+    document.getElementById('logout').style.visibility='hidden';
+    console.log("you are now logged out")
+  });
 }
 
 function setLoadingScreen(status) {
@@ -46,7 +56,7 @@ function setLoadingScreen(status) {
   }
   // Create a loading screen so user knows their request was processed
   // Right now it shows 'Jane Doe', lol
-
+  
   return
 }
 
@@ -76,7 +86,7 @@ function getData() {
   .catch(err => {
     console.log('Error! could not get data - ', err)
   })
-
+  
 }
 
 function displayData([matchingUsers, userDataDoc]) {
@@ -114,6 +124,7 @@ function checkForNewUser(userData) {
     .then(user => {
       resolve(userData)
     })
+    
   })
 
   return newUserPromise
