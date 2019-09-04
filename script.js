@@ -7,6 +7,7 @@ $(document).ready(function() {
     $('#editProfile').on('click', addLikesToUserModal)
     $('#logout').on('click', logout)
     document.getElementById('logout').style.visibility='hidden';
+    document.getElementById('editProfile').style.visibility='hidden';
 
     // This snippet should allow toggle clicking instead of control click to select multiple categories
     $("select[multiple] option").mousedown(function(){
@@ -29,6 +30,7 @@ function clickLogin() {
   document.getElementById("cardDiv").style.display = "block"
   document.getElementById("carouselContainer").style.display = "block"
   document.getElementById('logout').style.visibility='visible';
+  document.getElementById('editProfile').style.visibility='visible';
   
   setLoadingScreen(true)
   
@@ -44,6 +46,7 @@ function logout() {
     document.getElementById("cardDiv").style.display = "none"
     document.getElementById("carouselContainer").style.display = "none"
     document.getElementById('logout').style.visibility='hidden';
+    document.getElementById('editProfile').style.visibility='hidden';
     console.log("you are now logged out")
   });
 }

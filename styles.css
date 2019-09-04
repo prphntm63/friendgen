@@ -70,3 +70,12 @@ p{
     z-index: 3;
 }
 
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: grey;
+   }
+.copyRight{
+    color:red;
+}
