@@ -2,6 +2,7 @@ $(document).ready(function() {
   
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
+    $('#privacyPolicyLink').on('click', function() {$('#privacyPolicy').modal('show')})
 
     $('#logout').hide() //Hide the user logged in buttons by default
     $('#userBadge').hide()
