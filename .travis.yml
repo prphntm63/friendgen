@@ -3,6 +3,8 @@ node_js:
   - "7"
 
 install:
+  - npm install gulp-qunit
+  - npm install gulp-util
   - npm install gulp
   - npm install -g firebase-tools
 
