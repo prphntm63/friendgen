@@ -1,3 +1,6 @@
 language: node_js
 node_js:
   - "0.10"
+
+  after_success
+  - firebase deploy --project friendgen --token 1/tdk_B7R3nIJTxfyEXIvkerwrQawA4-9wlZjDqqUKtfU
