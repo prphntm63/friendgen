@@ -11,7 +11,6 @@ $(document).ready(function() {
     $('#editProfile').on('click', addLikesToUserModal)
     $('#logout').on('click', logout)
     $('#login').on('click', clickLogin)
-    document.getElementById('logout').style.visibility='hidden';
 
     // This snippet should allow toggle clicking instead of control click to select multiple categories
     $("select[multiple] option").mousedown(function(){
