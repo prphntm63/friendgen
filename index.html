@@ -140,8 +140,8 @@
                 <p>Hey! Looks like you haven't added any likes or category interests yet! You may have no matches if you do not add this data.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
-                <button type="button" class="btn btn-primary" id="addLikesToUser">Add Some Likes!</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Okay</button>
+                <button type="button" class="btn btn-outline-warning btn-sm" id="addLikesToUser">Add Some Likes!</button>
             </div>
             </div>
         </div>
@@ -164,7 +164,7 @@
                     </div>
                     <div class="form-group">
                         <label for="userCategoriesInput">Select some categories you like</label>
-                        <select multiple class="form-control" id="userCategoriesInput">                          
+                        <select multiple class="form-control" id="userCategoriesInput" size='10'>                          
                             <option>Art/Museums</option>
                             <option>Concerts/Events</option>
                             <option>Cooking/Baking</option>
@@ -178,13 +178,59 @@
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="updateUserLikes">Update Profile</button>
+                <div class="modal-footer" >
+                    <div class="mr-auto">
+                        <button type="button" class="btn btn-danger btn-sm" id="deleteUserProfile">Delete Profile</button>
+                    </div>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-warning btn-sm" id="updateUserLikes">Update Profile</button>
+                    </div>
                 </div>
                 </div>
             </div>
         </div>
+
+    <!-- Delete profile confirmation -->
+    <div class="modal" tabindex="-1" role="dialog" id="deleteConfirm">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your profile? This will permanenetly remove your data from Friendgen.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" id="deleteUserProfileConfirm">Yes, I'm sure</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete profile success -->
+    <div class="modal" tabindex="-1" role="dialog" id="deleteSuccess">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Success</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Your profile was successfully deleted and your data was removed from Friendgen.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Okay</button>
+            </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Privacy Policy Modal -->
     <div class="modal" tabindex="-1" role="dialog" id="privacyPolicy">
@@ -202,9 +248,9 @@
                     <p>By using this site I consent to the following:</p>
                     <ul>
                         <li>I am at least 18 years old</li>
-                        <li>I will not use Friendgen to participate in activities that may cause harm to other users</li>
-                        <li>I am willing to share my public facebook profile and first name with other usrs</li>
-                        <li>I am willing to share any likes or selected categories with other users</li>
+                        <li>I will not use Friendgen to participate in activities that may be harmful to other users</li>
+                        <li>I am willing to share my public facebook profile and first name with other users</li>
+                        <li>I am willing to share my user profile data with other users</li>
                         <li>I am willing to indirectly share my IP based location with other users</li>
                         <li>I understand that other users are not screened (other than having a facebook account) and Friendgen is not responsible for other users' content.</li>
                         <li>I understand that any data is I share with Friendgen may be stored on Friendgen's servers for a minimum of 15 days</li>
@@ -216,16 +262,17 @@
                     <p>We don't want anyone to be in for bad surprises, so here's our privacy policy in common English:</p>
                     <ul>
                         <li>Friendgen will <strong>NEVER</strong> sell or distribute user data to third parties, including other users or advertisers</li>
-                        <li>Since we do not verify accounts, it should be assumed that any data you provide to Friendgen <em>may</em> end up in the public domain.</li>
+                        <li>Since we do not actively verify accounts, it should be assumed that any data you provide to Friendgen <em>may</em> end up in the public domain.</li>
                         <li>Friendgen may actively track and update your IP location in our records when you have the site open in your browser.</li>
-                        <li>Friendgen will keep some of your data (for a minimum of 15 days) in our records to facilitate matchmaking with other users.</li>
-                        <li>If you decide that you not want Friendgen to keep a record of your user profile and/or data, we will happily remove your records if you send us an email at <a href="mailto:admin@friendgen.net">admin@friendgen.net</a>.</li>
+                        <li>Friendgen may keep some of your data (for a maximum of 15 days) in our records to facilitate matchmaking with other users.</li>
+                        <li>If you decide that you not want Friendgen to keep a record of your user profile and/or data, simply delete your profile and that data will be permanenetly removed from Friendgen.</li>
+                        <li>We will happily remove or modify your profile manually if you send us an email at <a href="mailto:admin@friendgen.net">admin@friendgen.net</a>.</li>
                     </ul>
                 </div>
                 <p>We are not lawyers, nor do we particularly want to hire one. So if you need any clarification on any of the below points please do not hesitate to contact us at <a href="mailto:admin@friendgen.net">admin@friendgen.net</a></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Okay</button>
             </div>
             </div>
         </div>
