@@ -215,6 +215,11 @@ function populateLikesInModalDialog(userData) {
   $('#userLikesInput').on('keypress', updateLikesInList)
 
   $('#userCategoriesInput').val(categories)
+
+  if (userData.preferences) {
+    $('#maxUserDistance').val(userData.preferences.maxUserDistance)
+    $('#maxUserTimeout').val(userData.preferences.maxUserTimeout)
+  }
 }
 
 function removeLikeFromList(event) {
@@ -433,7 +438,11 @@ function updateUserLikesFromModal() {
     let userData = {
         id: USERID,
         likes: userLikes,
-        categories: userCategories
+        categories: userCategories,
+        preferences: {
+          "maxUserDistance":$('#maxUserDistance').val(),
+          "maxUserTimeout":$('#maxUserTimeout').val()
+        }
     }
 
     DB.updateUserInfo(userData)

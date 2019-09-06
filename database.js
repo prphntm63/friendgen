@@ -145,7 +145,8 @@
                                 'location':user.data.location,
                                 'lastfix':user.data.lastFix,
                                 'matchingLikes':[likeResult.like],
-                                'dataURL':user.data.dataURL
+                                'dataURL':user.data.dataURL,
+                                'preferences':user.data.preferences //may be undefined
                             }
                             matchingUsers.push(userObject)
                         } else {
@@ -205,7 +206,8 @@
                                 'location':user.data.location,
                                 'lastfix':user.data.lastFix,
                                 'matchingCategories':[categoryResult.category],
-                                'dataURL':user.data.dataURL
+                                'dataURL':user.data.dataURL,
+                                'preferences':user.data.preferences //may be undefined
                             }
                             matchingUsers.push(userObject)
                         } else {
@@ -223,8 +225,10 @@
     }
 
     function filterLocationLogin([matchingUsers, userDataDoc]) {
-        let maxTimeout = 1000000000 //seconds from last login
-        let maxDistance = 1000000000 //distance in meters
+        let userData = userDataDoc.data()
+        let maxTimeout = 3600 //Default - seconds from last login
+        let maxDistance = 8800 //Default - distance in yards
+        
 
         function measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function
             var R = 6378.137; // Radius of earth in KM
@@ -235,14 +239,19 @@
             Math.sin(dLon/2) * Math.sin(dLon/2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             var d = R * c;
-            return d * 1000; // meters
+            return d * 1000 * 1.09361; // yards
         }
 
-        let userData = userDataDoc.data()
         let newMatchingUsers = []
         
         matchingUsers.forEach(user => {
-            let time = 1000000;
+            if (user.preferences) {
+                maxDistance = user.preferences.maxUserDistance
+                maxTimeout = user.preferences.maxUserTimeout
+            } else {
+                console.log(user)
+            }
+            let time = 3600;
             if (user.lastfix) {
                 time = userData.lastFix.seconds - user.lastfix.seconds
             }

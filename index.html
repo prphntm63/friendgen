@@ -209,6 +209,43 @@
                             <option>Travel</option>                            
                         </select>
                     </div>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="maxUserDistance">Allow users within </label>
+                            <select class="form-control mx-2 form-control-sm" id="maxUserDistance">
+                                <option value="100">100 yards</option>
+                                <option value="500">500 yards</option>
+                                <option value="1000">1000 yards</option>
+                                <option value="1760">1 mile</option>
+                                <option value="3520">2 miles</option>
+                                <option value="8800" selected="selected">5 miles</option>
+                                <option value="17600">10 miles</option>
+                                <option value="35200">20 miles</option>
+                                <option value="88000">50 miles</option>
+                                <option value="176000">100 miles</option>
+                                <option value="880000">500 miles</option>
+                                <option value="1000000000">Infinite</option>
+                            </select>
+                            <label for="maxUserDistance"> to contact me.</label>
+                        </div>
+                    </div>
+                    <div class="form-inline mt-2">
+                        <div class="form-group">
+                            <label for="maxUserTimeout">Mark me as offline after </label>
+                            <select class="form-control mx-2 form-control-sm" id="maxUserTimeout">
+                                <option value="300">5 minutes</option>
+                                <option value="600">10 minutes</option>
+                                <option value="900">15 minutes</option>
+                                <option value="1800">30 minutes</option>
+                                <option value="3600" selected="selected">1 hour</option>
+                                <option value="7200">2 hours</option>
+                                <option value="14400">4 hours</option>
+                                <option value="43200">12 hours</option>
+                                <option value="86400">1 day</option>
+                                <option value="10000000000">Never</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer" >
                     <div class="mr-auto">
