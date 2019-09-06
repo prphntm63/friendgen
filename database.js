@@ -41,7 +41,6 @@
     
     function updateUserStatus(userData) {
         console.log('Updating User...')
-        console.log('userData', userData)
 
         return db.collection("users").doc(userData.id)
         .update({
@@ -288,7 +287,7 @@
                 "subject":message.subject,
                 "message":message.text,
                 "sender":userData.id,
-                "read":false
+                "unread":true
             }),
         }, {merge:true})
         .then(querySnapshot => {
@@ -332,17 +331,18 @@
             for (let idx=0; idx<messages.length; idx++) {
                 if (messages[idx].messageId == messageId) {
                     messages[idx].unread = false;
-                    return messages
+                    return [messages, messageId]
                 }
             }
         })
-        .then(messages => {
+        .then(function([messages, messageId]) {
             return db.collection("users").doc(USERID)
             .set({
                 "messages" : messages
             }, {merge:true})
             .then(querySnapshot => {
                 console.log('Marked message read')
+                return messageId
             })
             .catch(errorSnapshot => {
                 console.log('Error marking message read - ')
@@ -376,6 +376,25 @@
         })
     }
 
+    function getMessageFromMessageId(messageId) {
+        return getUserMessages({"id":USERID})
+        .then(messages => {
+            for (let idx=0; idx<messages.length; idx++) {
+                if (messages[idx].messageId == messageId) {
+                    return messages[idx]
+                }
+            }
+        })
+        .then(message => {
+            console.log('Got Message')
+            return message
+        })
+        .catch(error => {
+            console.log('error getting message - ')
+            console.log(error)
+        })
+    }
+
 
     window.DB = window.DB || {}
     window.DB.updateUserInfo = updateUserInfo
@@ -384,6 +403,7 @@
     window.DB.compareUser = compareUserInDb
     window.DB.sendMessage = sendUserMessage
     window.DB.getMessages = getUserMessages
+    window.DB.getMessageFromMessageId = getMessageFromMessageId
     window.DB.markMessageRead = markMessageReadInDb
     window.DB.deleteMessage = deleteMessageFromDb
 
