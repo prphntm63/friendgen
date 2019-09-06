@@ -456,6 +456,33 @@ body {
     background-color: #fff;
 }
 
+#userLikesInput {
+    min-height: 150px;
+    padding: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    line-height: 80%;
+}
+
+#userLikesInput > span {
+    font-size: 100%;
+    margin: 2px 2px;
+}
+
+.xRemove , .xRemove:hover {
+    cursor: pointer;
+    text-decoration: none;
+    color: #ccc;
+    
+}
+
+#userCategoriesInput {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* MOBILE CSS STYLES */
+
 #phone-pictures {
     display:none;
 }

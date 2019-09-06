@@ -207,10 +207,33 @@ function populateLikesInModalDialog(userData) {
   let likes = userData.likes;
   let categories = userData.categories;
 
-  let newText = likes.map(like => {return like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}).join(', ')
-  $('#userLikesInput').val(newText)
+  // let newText = likes.map(like => {return like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}).join(', ')
+  let newText = likes.map(like => {return `<span contenteditable="false" class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)} <a href="#" class="xRemove">&#x2613;</a></span>`}).join('')  
+  
+  $('#userLikesInput').html(newText)
+  $('.xRemove').on('click', removeLikeFromList)
+  $('#userLikesInput').on('keypress', updateLikesInList)
 
   $('#userCategoriesInput').val(categories)
+}
+
+function removeLikeFromList(event) {
+  $(this).parent().remove()
+}
+
+function updateLikesInList(event) {
+  if (!(event.key === ',' || event.key === 'Enter' || event.key === ';')) {return}
+  event.preventDefault()
+
+  let likesHTML = $('#userLikesInput').html()
+  let newValue = likesHTML.split('>').slice(-1)[0].trim()
+  likesHTML = likesHTML.substring(0, likesHTML.length-newValue.length)
+  likesHTML += `<span contenteditable="false" class="badge badge-pill badge-secondary">${newValue} <a href="#" class="xRemove">&#x2613;</a></span>`
+  $('#userLikesInput').html(likesHTML)
+  $('.xRemove').on('click', removeLikeFromList)
+  $('#userLikesInput').focus()
+  document.execCommand('selectAll', false, null);
+  document.getSelection().collapseToEnd();
 }
 
 function makeUserDiv(userData) { //This function currently is not used but is left intact in case it is needed in the future
@@ -392,13 +415,18 @@ function addLikesToUserModal() { //This function simply dismisses the 'alert-no 
 function updateUserLikesFromModal() {
     $('#addLikesModal').modal('hide')
     setLoadingScreen(true)
-    let userLikesString = $('#userLikesInput').val()
-    let userLikesRaw = userLikesString.split(',') 
+    let userLikesString = $('#userLikesInput').html()
+    // let userLikesRaw = userLikesString.split(',') 
+    $('#userLikesInput').find('.xRemove').replaceWith(',')
+    let userLikesRaw = $('#userLikesInput').text().split(',')
+    $('#userLikesInput').html(userLikesString)
     let userLikes =[];
     // remove leading/trailing whitespace and illegal chars
     userLikesRaw.forEach(function(el){
       el = el.trim().replace(/[|&;$%@"<>()+,]/g, '').toLowerCase();
-      userLikes.push(el)
+      if (el != '' && el != ' ') {
+        userLikes.push(el)
+      }
     })
     let userCategories = $('#userCategoriesInput').val()
 
