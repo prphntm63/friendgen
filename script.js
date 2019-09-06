@@ -44,13 +44,13 @@ $(document).ready(function() {
         if(USERID){
             getLocation()
             .then(locationData => {
-                console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
                 let userData = {}
                 userData.id = USERID
                 userData.location = {}
                 userData.location.lat = locationData.coords.latitude;
                 userData.location.lon = locationData.coords.longitude;
                 DB.updateUserStatus(userData);
+                updateUnreadMessageBadge()
             }).catch(console.log("error"))
         }
     }, 60000)
@@ -503,7 +503,11 @@ function deleteMessage(event) {
   event.stopPropagation()
   let messageId = event.target.parentNode.parentNode.parentNode.id
   DB.deleteMessage(messageId)
-  $(this).parent().parent().parent().remove()
+  .then(messageId => {
+    $(this).parent().parent().parent().remove()
+    updateUnreadMessageBadge()
+  })
+  
 }
 
 function replyMessage(event) {
@@ -513,6 +517,7 @@ function replyMessage(event) {
   DB.markMessageRead(messageId)
   .then(DB.getMessageFromMessageId)
   .then(message => {
+    updateUnreadMessageBadge()
     let targetUser = {"id":message.sender};
     let userData = {"id":USERID};
     $('#inboxModal').modal('hide')
@@ -553,30 +558,31 @@ function deleteProfile() {
   
 }
 
-$(document).keypress(generateTestMessage)
+// // Test Message Generator (press 'm' to generate a test message)
+// $(document).keypress(generateTestMessage)
 
-function generateTestMessage(event) {
-  console.log(event)
-  event.stopPropagation();
-  if (event.key != 'm') return
-  console.log('generated test message')
+// function generateTestMessage(event) {
+//   console.log(event)
+//   event.stopPropagation();
+//   if (event.key != 'm') return
+//   console.log('generated test message')
 
-  let targetUser = {"id":USERID};
-  let userData = {"id":USERID};
-  let messageText = 'This is a test message'
-  let messageSubject = 'Test Message'
-  messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  let message = {"subject":messageSubject,"text":messageText};
+//   let targetUser = {"id":USERID};
+//   let userData = {"id":USERID};
+//   let messageText = 'This is a test message'
+//   let messageSubject = 'Test Message'
+//   messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+//   let message = {"subject":messageSubject,"text":messageText};
 
-  DB.sendMessage(userData, targetUser, message)
-  .then(function() {
-    $('#messageText').val('')
-    $('#messageSubject').val('')
-    $('#messageModal').modal('hide')
-    updateUnreadMessageBadge()
-    console.log('Message sent!')
-  })
-  .catch(error => {
-    console.log('Message not sent...')
-  })
-}
+//   DB.sendMessage(userData, targetUser, message)
+//   .then(function() {
+//     $('#messageText').val('')
+//     $('#messageSubject').val('')
+//     $('#messageModal').modal('hide')
+//     updateUnreadMessageBadge()
+//     console.log('Message sent!')
+//   })
+//   .catch(error => {
+//     console.log('Message not sent...')
+//   })
+// }
