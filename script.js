@@ -54,7 +54,7 @@ $(document).ready(function() {
               DB.updateUserStatus(userData);
           }).catch(console.log("error"))
       }
-    }, 5000)
+    }, 60000)
    
     
 })
@@ -81,6 +81,7 @@ function logout() {
     $('#editProfile').hide()
     $('#messages').hide()
     $('#unreadMessagesBadge').hide()
+    window.USERID = undefined;
 
     console.log("you are now logged out")
   });
@@ -172,6 +173,10 @@ function checkForNewUser(userData) {
 }
 
 function updateUnreadMessageBadge(userData) {
+  if (!userData && USERID) {
+    userData = {"id":USERID}
+  }
+
   let unreadMessagePromise = new Promise(function(resolve, reject) {
     DB.getUser(userData)
     .then(userDocument => {
@@ -202,10 +207,38 @@ function populateLikesInModalDialog(userData) {
   let likes = userData.likes;
   let categories = userData.categories;
 
-  let newText = likes.map(like => {return like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}).join(', ')
-  $('#userLikesInput').val(newText)
+  // let newText = likes.map(like => {return like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}).join(', ')
+  let newText = likes.map(like => {return `<span contenteditable="false" class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)} <a href="#" class="xRemove">&#x2613;</a></span>`}).join('')  
+  
+  $('#userLikesInput').html(newText)
+  $('.xRemove').on('click', removeLikeFromList)
+  $('#userLikesInput').on('keypress', updateLikesInList)
 
   $('#userCategoriesInput').val(categories)
+
+  if (userData.preferences) {
+    $('#maxUserDistance').val(userData.preferences.maxUserDistance)
+    $('#maxUserTimeout').val(userData.preferences.maxUserTimeout)
+  }
+}
+
+function removeLikeFromList(event) {
+  $(this).parent().remove()
+}
+
+function updateLikesInList(event) {
+  if (!(event.key === ',' || event.key === 'Enter' || event.key === ';')) {return}
+  event.preventDefault()
+
+  let likesHTML = $('#userLikesInput').html()
+  let newValue = likesHTML.split('>').slice(-1)[0].trim()
+  likesHTML = likesHTML.substring(0, likesHTML.length-newValue.length)
+  likesHTML += `<span contenteditable="false" class="badge badge-pill badge-secondary">${newValue} <a href="#" class="xRemove">&#x2613;</a></span>`
+  $('#userLikesInput').html(likesHTML)
+  $('.xRemove').on('click', removeLikeFromList)
+  $('#userLikesInput').focus()
+  document.execCommand('selectAll', false, null);
+  document.getSelection().collapseToEnd();
 }
 
 function makeUserDiv(userData) { //This function currently is not used but is left intact in case it is needed in the future
@@ -387,20 +420,29 @@ function addLikesToUserModal() { //This function simply dismisses the 'alert-no 
 function updateUserLikesFromModal() {
     $('#addLikesModal').modal('hide')
     setLoadingScreen(true)
-    let userLikesString = $('#userLikesInput').val()
-    let userLikesRaw = userLikesString.split(',') 
+    let userLikesString = $('#userLikesInput').html()
+    // let userLikesRaw = userLikesString.split(',') 
+    $('#userLikesInput').find('.xRemove').replaceWith(',')
+    let userLikesRaw = $('#userLikesInput').text().split(',')
+    $('#userLikesInput').html(userLikesString)
     let userLikes =[];
     // remove leading/trailing whitespace and illegal chars
     userLikesRaw.forEach(function(el){
       el = el.trim().replace(/[|&;$%@"<>()+,]/g, '').toLowerCase();
-      userLikes.push(el)
+      if (el != '' && el != ' ') {
+        userLikes.push(el)
+      }
     })
     let userCategories = $('#userCategoriesInput').val()
 
     let userData = {
         id: USERID,
         likes: userLikes,
-        categories: userCategories
+        categories: userCategories,
+        preferences: {
+          "maxUserDistance":$('#maxUserDistance').val(),
+          "maxUserTimeout":$('#maxUserTimeout').val()
+        }
     }
 
     DB.updateUserInfo(userData)
@@ -471,6 +513,7 @@ function getMessages() {
         $('.message-delete').on('click', deleteMessage)
         $('.message-reply').on('click', replyMessage)
         $('#inboxModal').modal('show')
+        updateUnreadMessageBadge()
       })
 
     } else {
@@ -499,13 +542,45 @@ function deleteMessage(event) {
   event.stopPropagation()
   let messageId = event.target.parentNode.parentNode.parentNode.id
   DB.deleteMessage(messageId)
-  $(this).parent().parent().parent().remove()
+  .then(messageId => {
+    $(this).parent().parent().parent().remove()
+    updateUnreadMessageBadge()
+  })
+  
 }
 
 function replyMessage(event) {
   event.stopPropagation()
   let messageId = event.target.parentNode.parentNode.parentNode.id
-  console.log('replied to message - '+messageId)
+  
+  DB.markMessageRead(messageId)
+  .then(DB.getMessageFromMessageId)
+  .then(message => {
+    updateUnreadMessageBadge()
+    let targetUser = {"id":message.sender};
+    let userData = {"id":USERID};
+    $('#inboxModal').modal('hide')
+    $('#messageModal').modal('show')
+    $('#sendMessage').on('click', function(){
+      $('#sendMessage').unbind()
+      let messageText = $('#messageText').val()
+      let messageSubject = $('#messageSubject').val()
+      messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let replyMessage = {"subject":messageSubject,"text":messageText};
+
+      DB.sendMessage(userData, targetUser, replyMessage)
+      .then(function() {
+        $('#messageText').val('')
+        $('#messageSubject').val('')
+        $('#messageModal').modal('hide')
+        $('#messageSentModal').modal('show')
+        console.log('Message sent!')
+      })
+      .catch(error => {
+        console.log('Message not sent...')
+      })
+    })
+  })
 }
 
 function deleteProfile() {
@@ -521,3 +596,32 @@ function deleteProfile() {
   })
   
 }
+
+// // Test Message Generator (press 'm' to generate a test message)
+// $(document).keypress(generateTestMessage)
+
+// function generateTestMessage(event) {
+//   console.log(event)
+//   event.stopPropagation();
+//   if (event.key != 'm') return
+//   console.log('generated test message')
+
+//   let targetUser = {"id":USERID};
+//   let userData = {"id":USERID};
+//   let messageText = 'This is a test message'
+//   let messageSubject = 'Test Message'
+//   messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+//   let message = {"subject":messageSubject,"text":messageText};
+
+//   DB.sendMessage(userData, targetUser, message)
+//   .then(function() {
+//     $('#messageText').val('')
+//     $('#messageSubject').val('')
+//     $('#messageModal').modal('hide')
+//     updateUnreadMessageBadge()
+//     console.log('Message sent!')
+//   })
+//   .catch(error => {
+//     console.log('Message not sent...')
+//   })
+// }
