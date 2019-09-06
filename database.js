@@ -247,7 +247,6 @@
         
         matchingUsers.forEach(user => {
             if (user.preferences) {
-                console.log(user.name, user.preferences.maxUserDistance, user.preferences.maxUserTimeout)
                 maxDistance = user.preferences.maxUserDistance
                 maxTimeout = user.preferences.maxUserTimeout
             } else {
