@@ -201,7 +201,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     </div>
                     <div class="match-card-body">
                       <div>
-                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                        <h3>${user.name.toLowerCase()}</h3>
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
                         <small>Your shared interests:</small>
