@@ -385,6 +385,31 @@
         })
     }
 
+    function authenticateDb(userData) {
+        let dbAuthPromise = new Promise(function(resolve, reject) {
+          return firebase.auth().signInAnonymously()
+          .then(function() {
+                resolve(userData)
+            })
+          .catch(error => {
+            console.log(error)
+          })
+        })
+      
+        return dbAuthPromise
+    }
+
+    function deauthenticateDb() {
+        let dbDeauthPromise = new Promise(function(resolve, reject) {
+            return firebase.auth().signOut()
+            .then(resolve())
+            .catch(error => {
+                console.log(error)
+            })
+        })
+
+        return dbDeauthPromise
+
     function getMessageFromMessageId(messageId) {
         return getUserMessages({"id":USERID})
         .then(messages => {
@@ -415,6 +440,8 @@
     window.DB.getMessageFromMessageId = getMessageFromMessageId
     window.DB.markMessageRead = markMessageReadInDb
     window.DB.deleteMessage = deleteMessageFromDb
+    window.DB.authenticate = authenticateDb
+    window.DB.deauth = deauthenticateDb
 
 
     
