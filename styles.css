@@ -82,6 +82,8 @@ small {
     color: #666;
 }
 
+
+
 .badge {
     font-size: 60%;
 }
@@ -117,6 +119,10 @@ small {
     left: 40%;
     top: 43%;
     z-index: 3;
+}
+
+.modalMessage{
+    text-align: center;
 }
 
 .carouselDiv{

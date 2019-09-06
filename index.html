@@ -126,6 +126,27 @@
         </div>
     </div>
 
+      <!-- This modal tells user they are not logged -->
+      <div class="modal" tabindex="-1" role="dialog" id="noAuthorizedLogin">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login fail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <div class="modal-content">
+            <div class="modal-body">
+                <p class="modalMessage">Oops - Looks like you didn't log-in.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="refreshPage">Okay</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <!-- This modal prompts the user to add some likes if they don't have any -->
     <div class="modal" tabindex="-1" role="dialog" id="noLikesModal">
         <div class="modal-dialog" role="document">
