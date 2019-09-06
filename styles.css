@@ -51,6 +51,37 @@ body{
     background-color:  #b6c8d2;
 }
 
+/* style overwrites for modal */
+.btn-outline-warning{
+    color:  gray;
+    border-color:  #fef648;
+    background-color:  #fef648;
+}
+.btn-outline-warning:hover, .btn-outline-warning:active{
+    color:  gray;
+    border-color: #fef648;
+    background-color:  white;
+}
+.badge-warning {
+    background-color:  #fef648;
+}
+
+/* style overwrites for card carousel */
+.badge-pill{
+    margin-left: .4rem;
+    margin-right: .4rem;
+}
+.badge {
+    font-weight: 400;
+}
+.match-card-body{
+    margin:auto;
+}
+.match-card-body h3{
+    font-family: 'Oswald', sans-serif;
+    color: black;
+}
+
 
 h3{
     /* color: rgb(255, 255, 255); */
