@@ -178,12 +178,13 @@ function updateUnreadMessageBadge(userData) {
       let messages = userDocumentData.messages;
 
       let unreadMessageCounter = 0;
-      messages.forEach(message => {
-        if (message.unread) {
-          unreadMessageCounter++
-        }
-      })
-
+      if(messages){
+        messages.forEach(message => {
+          if (message.unread) {
+            unreadMessageCounter++
+          }
+        })
+      }
       if (unreadMessageCounter) {
         $('#unreadMessagesBadge').text(unreadMessageCounter)
         $('#unreadMessagesBadge').show()
@@ -300,7 +301,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
               <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
               <div class="match-card-body">
                       <div>
-                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                        <h3 class="text-shadow">${user.name ? user.name.toUpperCase() : ''}</h3>
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
                         <small>Your shared interests:</small>
