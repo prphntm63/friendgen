@@ -7,9 +7,12 @@ $(document).ready(function() {
     $('#logout').hide() //Hide the user logged in buttons by default
     $('#userBadge').hide()
     $('#editProfile').hide()
+    $('#messages').hide()
+    $('#unreadMessagesBadge').hide()
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
+    $('#messages').on('click', getMessages)
     $('#logout').on('click', logout)
     $('#login').on('click', clickLogin)
 
@@ -48,6 +51,8 @@ function logout() {
     $('#matchCardParentContainer').html('')
     $('#userBadge').hide()
     $('#editProfile').hide()
+    $('#messages').hide()
+    $('#unreadMessagesBadge').hide()
 
     console.log("you are now logged out")
   });
@@ -81,7 +86,8 @@ function getData() {
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
-  .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them
+  .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
+  .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.updateUserInfo) //update user info from fb and location data in DB
   .then(DB.compareUser) //compare user to others in DB and return matching users
   .catch(err => {
@@ -98,6 +104,7 @@ function displayData([matchingUsers, userDataDoc]) {
   $('#main-div').hide()
   $('#userBadge').show()
   $('#editProfile').show()
+  $('#messages').show()
 
   // makeUserDiv(userData)
   var sortedMatchingUsers = matchingUsers.sort((a, b) => b.score - a.score);
@@ -135,6 +142,32 @@ function checkForNewUser(userData) {
   })
 
   return newUserPromise
+}
+
+function updateUnreadMessageBadge(userData) {
+  let unreadMessagePromise = new Promise(function(resolve, reject) {
+    DB.getUser(userData)
+    .then(userDocument => {
+      let userDocumentData = userDocument.data();
+      let messages = userDocumentData.messages;
+
+      let unreadMessageCounter = 0;
+      messages.forEach(message => {
+        if (message.unread) {
+          unreadMessageCounter++
+        }
+      })
+
+      if (unreadMessageCounter) {
+        $('#unreadMessagesBadge').text(unreadMessageCounter)
+        $('#unreadMessagesBadge').show()
+      }
+
+      resolve(userData)
+    })
+  })
+
+  return unreadMessagePromise
 }
 
 function populateLikesInModalDialog(userData) {
@@ -188,11 +221,12 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
 
     matchedUsers.forEach(user => {
       htmlOut += `
-                  <div class="revolve-item" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)">
+                  <div class="revolve-item" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)" id="${user.id}">
                     <div class='leftArrow'>\⟨</div>
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
                         <img src="${user.dataURL}" alt="/images/noprof.png">
+                        <div class="badge badge-pill badge-light send-message">Send Message!</div>
                     </div>
                     <div class="match-card-body">
                       <div>
@@ -232,6 +266,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
   }
 
   $('#matchCardParentContainer').html(htmlOut)
+  $('.send-message').on('click', sendMessage)
   $(".rightArrow").on("click", { d: "n" }, rotate);
   $(".leftArrow").on("click", { d: "p" }, rotate);
 
@@ -252,6 +287,32 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
       "-o-transform": "rotateY("+currdeg+"deg)",
       "transform": "rotateY("+currdeg+"deg)"
     });
+  }
+
+  function sendMessage(event) {
+    event.stopPropagation();
+    let targetUser = {"id":event.currentTarget.parentNode.parentNode.id};
+    let userData = {"id":USERID};
+    $('#messageModal').modal('show')
+    $('#sendMessage').on('click', function(){
+      $('#sendMessage').unbind()
+      let messageText = $('#messageText').val()
+      let messageSubject = $('#messageSubject').val()
+      messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let message = {"subject":messageSubject,"text":messageText};
+
+      DB.sendMessage(userData, targetUser, message)
+      .then(function() {
+        $('#messageText').val('')
+        $('#messageSubject').val('')
+        $('#messageModal').modal('hide')
+        $('#messageSentModal').modal('show')
+        console.log('Message sent!')
+      })
+      .catch(error => {
+        console.log('Message not sent...')
+      })
+    })
   }
 }
 
@@ -286,3 +347,104 @@ function updateUserLikesFromModal() {
     .then(displayData)
     
 }
+
+function getMessages() {
+  let userData = {"id":USERID}
+  let htmlOut = '';
+  let idx = 0;
+
+  DB.getMessages(userData)
+  .then(messages => {
+    if (messages.length) {
+      let sentUserPromises = [];
+
+      messages.forEach(message => {
+        let messagePromise = new Promise(function(resolve, reject) {
+          DB.getUser({"id":message.sender})
+          .then(sentUserDocument => {
+            let sentUser = sentUserDocument.data();
+            message.dataURL = sentUser.dataURL;
+            message.senderName = sentUser.name;
+            resolve(message)
+          })
+        })
+
+        sentUserPromises.push(messagePromise)
+      })
+
+      Promise.all(sentUserPromises)
+      .then(messages => {
+        messages.forEach(message => {
+          htmlOut += `<div class="card" id="${message.messageId}">
+                    <div class="card-header d-inline-flex py-0 ${message.unread ? 'unread' : ''}" id="${'heading'+idx}">
+                      <div class="mr-auto">
+                        <img class="d-inline-block" src="${message.dataURL ? message.dataURL : "/images/noprof.png"}" style="width:30px;height:30px;object-fit:cover;border-radius:50%;">
+                        <h5 class="mb-0 d-inline-block">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#${'collapse'+idx}" aria-expanded="false" aria-controls="${'collapse'+idx}" style="text-decoration:none;">
+                              <span class="badge badge-pill badge-warning">${message.senderName ? message.senderName : 'Anonymous'}</span> ${message.subject ? message.subject : 'Message!'}
+                            </button>
+                        </h5>
+                      </div>
+                      <div class="ml-auto">
+                        <a href="#" class="d-inline-block ml-auto message-reply">
+                          &#x2BB0;
+                        </a>
+                        <a href="#" class="d-inline-block ml-auto message-delete">
+                          &#x1F5D1;
+                        </a>
+                      </div>
+                    </div>
+
+                    <div id="${'collapse'+idx}" class="collapse" aria-labelledby="${'heading'+idx}" data-parent="#inboxContainer">
+                      <div class="card-body">
+                        ${message.message}
+                      </div>
+                    </div>
+                </div>`
+          idx++
+        })
+
+        $('#inboxContainer').html(htmlOut)
+        // Attach read, reply, and delete methods
+        $('.unread').on('click', markMessageRead)
+        $('.message-delete').on('click', deleteMessage)
+        $('.message-reply').on('click', replyMessage)
+        $('#inboxModal').modal('show')
+      })
+
+    } else {
+      htmlOut += '<div><p>No Messages</p></div>'
+      $('#inboxContainer').html(htmlOut)
+      $('#inboxModal').modal('show')
+    }
+      
+  })
+
+}
+
+function markMessageRead(event) {
+  let messageId = event.target.parentNode.parentNode.parentNode.parentNode.id
+  DB.markMessageRead(messageId)
+  $(this).removeClass('unread')
+  let oldMessageCount = parseInt($('#unreadMessagesBadge').text())
+  if (oldMessageCount > 1) {
+    $('#unreadMessagesBadge').text(oldMessageCount-1)
+  } else {
+    $('#unreadMessagesBadge').hide()
+  }
+}
+
+function deleteMessage(event) {
+  event.stopPropagation()
+  let messageId = event.target.parentNode.parentNode.parentNode.id
+  DB.deleteMessage(messageId)
+  $(this).parent().parent().parent().remove()
+}
+
+function replyMessage(event) {
+  event.stopPropagation()
+  let messageId = event.target.parentNode.parentNode.parentNode.id
+  console.log('replied to message - '+messageId)
+}
+
+

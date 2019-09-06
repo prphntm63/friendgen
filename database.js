@@ -257,12 +257,115 @@
         return [matchingUsers, userDataDoc]
     }
 
+    function sendUserMessage(userData, targetUser, message) {
+        // Both userData and targeteUser are User objects
+        console.log(userData.id, message.text, message.subject)
+
+        return db.collection("users").doc(targetUser.id)
+        .set({
+            messages: firebase.firestore.FieldValue.arrayUnion({
+                "messageId":generateUUID(),
+                "subject":message.subject,
+                "message":message.text,
+                "sender":userData.id,
+                "read":false
+            }),
+        }, {merge:true})
+        .then(querySnapshot => {
+            console.log('Done! - sent message to'+ targetUser.id)
+            return userData
+        })
+        .catch(errorSnapshot => {
+            console.log('Error sending message - ')
+            console.log(errorSnapshot)
+        })
+    }
+
+    function getUserMessages(userData) {
+        return getUserFromDb(userData)
+        .then(userDocument => {
+            let userData = userDocument.data();
+            return userData.messages
+        })
+    }
+
+    function generateUUID() { // Public Domain/MIT
+        var d = new Date().getTime();//Timestamp
+        var d2 = (performance && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16;//random number between 0 and 16
+            if(d > 0){//Use timestamp until depleted
+                r = (d + r)%16 | 0;
+                d = Math.floor(d/16);
+            } else {//Use microseconds since page-load if supported
+                r = (d2 + r)%16 | 0;
+                d2 = Math.floor(d2/16);
+            }
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+
+
+    function markMessageReadInDb(messageId) {
+        return getUserMessages({"id":USERID})
+        .then(messages => {
+            for (let idx=0; idx<messages.length; idx++) {
+                if (messages[idx].messageId == messageId) {
+                    messages[idx].unread = false;
+                    return messages
+                }
+            }
+        })
+        .then(messages => {
+            return db.collection("users").doc(USERID)
+            .set({
+                "messages" : messages
+            }, {merge:true})
+            .then(querySnapshot => {
+                console.log('Marked message read')
+            })
+            .catch(errorSnapshot => {
+                console.log('Error marking message read - ')
+                console.log(errorSnapshot)
+            })
+        })
+    }
+
+    function deleteMessageFromDb(messageId) {
+        return getUserMessages({"id":USERID})
+        .then(messages => {
+            for (let idx=0; idx<messages.length; idx++) {
+                if (messages[idx].messageId == messageId) {
+                    messages.splice(idx,1);
+                    return messages
+                }
+            }
+        })
+        .then(messages => {
+            return db.collection("users").doc(USERID)
+            .set({
+                "messages" : messages
+            }, {merge:true})
+            .then(querySnapshot => {
+                console.log('Deleted Message')
+            })
+            .catch(errorSnapshot => {
+                console.log('Error deleting message - ')
+                console.log(errorSnapshot)
+            })
+        })
+    }
+
 
     window.DB = window.DB || {}
     window.DB.updateUserInfo = updateUserInfo
     window.DB.updateUserStatus = updateUserStatus
     window.DB.getUser = getUserFromDb
     window.DB.compareUser = compareUserInDb
+    window.DB.sendMessage = sendUserMessage
+    window.DB.getMessages = getUserMessages
+    window.DB.markMessageRead = markMessageReadInDb
+    window.DB.deleteMessage = deleteMessageFromDb
 
     
 })();
