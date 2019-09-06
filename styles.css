@@ -65,6 +65,10 @@ body{
 .badge-warning {
     background-color:  #fef648;
 }
+.badge-secondary{
+    color: black;
+    background-color: #b6c8d2;
+}
 
 /* style overwrites for card carousel */
 .badge-pill{

@@ -286,11 +286,11 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
                         <img src="${user.dataURL}" alt="/images/noprof.png">
-                        <div class="badge badge-pill badge-light send-message">Send Message!</div>
                     </div>
                     <div class="match-card-body">
                       <div>
-                        <h3 class="text-shadow">${user.name ? user.name.toUpperCase() : ''}</h3>
+                        <h3>${user.name ? user.name.toUpperCase() : ''}</h3>
+                        <div class="badge badge-pill badge-light send-message">Send Message!</div>
 
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
