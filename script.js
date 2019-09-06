@@ -171,6 +171,10 @@ function checkForNewUser(userData) {
 }
 
 function updateUnreadMessageBadge(userData) {
+  if (!userData && USERID) {
+    userData = {"id":USERID}
+  }
+
   let unreadMessagePromise = new Promise(function(resolve, reject) {
     DB.getUser(userData)
     .then(userDocument => {
@@ -470,6 +474,7 @@ function getMessages() {
         $('.message-delete').on('click', deleteMessage)
         $('.message-reply').on('click', replyMessage)
         $('#inboxModal').modal('show')
+        updateUnreadMessageBadge()
       })
 
     } else {
@@ -504,7 +509,34 @@ function deleteMessage(event) {
 function replyMessage(event) {
   event.stopPropagation()
   let messageId = event.target.parentNode.parentNode.parentNode.id
-  console.log('replied to message - '+messageId)
+  
+  DB.markMessageRead(messageId)
+  .then(DB.getMessageFromMessageId)
+  .then(message => {
+    let targetUser = {"id":message.sender};
+    let userData = {"id":USERID};
+    $('#inboxModal').modal('hide')
+    $('#messageModal').modal('show')
+    $('#sendMessage').on('click', function(){
+      $('#sendMessage').unbind()
+      let messageText = $('#messageText').val()
+      let messageSubject = $('#messageSubject').val()
+      messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let replyMessage = {"subject":messageSubject,"text":messageText};
+
+      DB.sendMessage(userData, targetUser, replyMessage)
+      .then(function() {
+        $('#messageText').val('')
+        $('#messageSubject').val('')
+        $('#messageModal').modal('hide')
+        $('#messageSentModal').modal('show')
+        console.log('Message sent!')
+      })
+      .catch(error => {
+        console.log('Message not sent...')
+      })
+    })
+  })
 }
 
 function deleteProfile() {
@@ -519,4 +551,32 @@ function deleteProfile() {
     logout()
   })
   
+}
+
+$(document).keypress(generateTestMessage)
+
+function generateTestMessage(event) {
+  console.log(event)
+  event.stopPropagation();
+  if (event.key != 'm') return
+  console.log('generated test message')
+
+  let targetUser = {"id":USERID};
+  let userData = {"id":USERID};
+  let messageText = 'This is a test message'
+  let messageSubject = 'Test Message'
+  messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  let message = {"subject":messageSubject,"text":messageText};
+
+  DB.sendMessage(userData, targetUser, message)
+  .then(function() {
+    $('#messageText').val('')
+    $('#messageSubject').val('')
+    $('#messageModal').modal('hide')
+    updateUnreadMessageBadge()
+    console.log('Message sent!')
+  })
+  .catch(error => {
+    console.log('Message not sent...')
+  })
 }
