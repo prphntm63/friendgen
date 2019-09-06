@@ -389,6 +389,7 @@
         let dbAuthPromise = new Promise(function(resolve, reject) {
           return firebase.auth().signInAnonymously()
           .then(function() {
+                // console.log(firebase.auth().currentUser)
                 resolve(userData)
             })
           .catch(error => {
@@ -409,6 +410,8 @@
         })
 
         return dbDeauthPromise
+
+    }
 
     function getMessageFromMessageId(messageId) {
         return getUserMessages({"id":USERID})
