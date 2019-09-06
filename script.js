@@ -54,7 +54,7 @@ $(document).ready(function() {
               DB.updateUserStatus(userData);
           }).catch(console.log("error"))
       }
-    }, 5000)
+    }, 60000)
    
     
 })
@@ -72,6 +72,7 @@ function logout() {
   //This function should log out of facebook session and reload page
 
   FB.logout (function(response){
+    DB.deauth()
     $('#login').show()
     $('#logout').hide()
     $('#background-wrap').show()
@@ -114,6 +115,7 @@ function getData() {
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
+  .then(DB.authenticate) //authenticate with DB
   .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
   .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.updateUserInfo) //update user info from fb and location data in DB

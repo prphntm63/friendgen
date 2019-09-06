@@ -376,6 +376,32 @@
         })
     }
 
+    function authenticateDb(userData) {
+        let dbAuthPromise = new Promise(function(resolve, reject) {
+          return firebase.auth().signInAnonymously()
+          .then(function() {
+                resolve(userData)
+            })
+          .catch(error => {
+            console.log(error)
+          })
+        })
+      
+        return dbAuthPromise
+    }
+
+    function deauthenticateDb() {
+        let dbDeauthPromise = new Promise(function(resolve, reject) {
+            return firebase.auth().signOut()
+            .then(resolve())
+            .catch(error => {
+                console.log(error)
+            })
+        })
+
+        return dbDeauthPromise
+    }
+
 
     window.DB = window.DB || {}
     window.DB.updateUserInfo = updateUserInfo
@@ -386,6 +412,8 @@
     window.DB.getMessages = getUserMessages
     window.DB.markMessageRead = markMessageReadInDb
     window.DB.deleteMessage = deleteMessageFromDb
+    window.DB.authenticate = authenticateDb
+    window.DB.deauth = deauthenticateDb
 
 
     
