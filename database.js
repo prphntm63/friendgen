@@ -41,7 +41,6 @@
     
     function updateUserStatus(userData) {
         console.log('Updating User...')
-        console.log('userData', userData)
 
         return db.collection("users").doc(userData.id)
         .update({

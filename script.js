@@ -51,9 +51,10 @@ $(document).ready(function() {
                 userData.location.lon = locationData.coords.longitude;
                 DB.updateUserStatus(userData);
                 updateUnreadMessageBadge()
-            }).catch(console.log("error"))
+            })
+            .catch(console.log("error"))
         }
-    }, 60000)
+    }, 60000) //Update every 60 seconds
    
     
 })
@@ -80,6 +81,7 @@ function logout() {
     $('#editProfile').hide()
     $('#messages').hide()
     $('#unreadMessagesBadge').hide()
+    window.USERID = undefined;
 
     console.log("you are now logged out")
   });
