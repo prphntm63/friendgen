@@ -51,6 +51,37 @@ body{
     background-color:  #b6c8d2;
 }
 
+/* style overwrites for modal */
+.btn-outline-warning{
+    color:  gray;
+    border-color:  #fef648;
+    background-color:  #fef648;
+}
+.btn-outline-warning:hover, .btn-outline-warning:active{
+    color:  gray;
+    border-color: #fef648;
+    background-color:  white;
+}
+.badge-warning {
+    background-color:  #fef648;
+}
+
+/* style overwrites for card carousel */
+.badge-pill{
+    margin-left: .4rem;
+    margin-right: .4rem;
+}
+.badge {
+    font-weight: 400;
+}
+.match-card-body{
+    margin:auto;
+}
+.match-card-body h3{
+    font-family: 'Oswald', sans-serif;
+    color: black;
+}
+
 
 h3{
     /* color: rgb(255, 255, 255); */
@@ -81,6 +112,8 @@ small {
     font-size: 8px;
     color: #666;
 }
+
+
 
 .badge {
     font-size: 60%;
@@ -117,6 +150,10 @@ small {
     left: 40%;
     top: 43%;
     z-index: 3;
+}
+
+.modalMessage{
+    text-align: center;
 }
 
 .carouselDiv{
@@ -337,7 +374,6 @@ body {
     /* opacity: 0.95; */
     border-radius: 10px;
     border: 3px solid gray;
-    cursor: pointer;
   }
 
   .match-card-body {
@@ -405,3 +441,58 @@ body {
     width: 100%;
     text-align: center;
 }
+
+.send-message {
+    position: relative;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.unread {
+    background-color: #fff;
+}
+
+#phone-pictures {
+    display:none;
+}
+@media only screen and (max-width: 740px) {
+    .revolve-container {
+        display: none;
+    }
+    .phone-container {
+        margin: 0 auto;
+        width: 400px;
+        height: 200px;
+        
+      }
+      
+      /* .phone {
+        display: flex;
+        height: 100%;
+        width: 100%;
+      } */
+      
+      .phone-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background: white;
+        width: 400px;
+        height: 200px;
+        text-align: center;
+        color: black;
+        border: 3px solid gray;
+        border-radius: 10px;
+        padding: 50px;
+    
+      }
+    #phone-pictures {
+        display: flex;
+        flex-direction: column;
+        
+    }
+  } 
