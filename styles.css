@@ -405,3 +405,44 @@ body {
     width: 100%;
     text-align: center;
 }
+
+#phone-pictures {
+    display:none;
+}
+@media only screen and (max-width: 740px) {
+    .revolve-container {
+        display: none;
+    }
+    .phone-container {
+        margin: 0 auto;
+        width: 400px;
+        height: 200px;
+        
+      }
+      
+      /* .phone {
+        display: flex;
+        height: 100%;
+        width: 100%;
+      } */
+      
+      .phone-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background: white;
+        width: 400px;
+        height: 200px;
+        text-align: center;
+        color: black;
+        border: 3px solid gray;
+        border-radius: 10px;
+        padding: 50px;
+    
+      }
+    #phone-pictures {
+        display: flex;
+        flex-direction: column;
+        
+    }
+  } 

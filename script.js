@@ -239,7 +239,36 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                   `
   }
 
+
+  let phonePictures = matchedUsers.map(function(user) {
+    return `<div class="container phone-item">
+              <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+              <div class="match-card-body">
+                      <div>
+                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                      </div>
+                      <div ${user.matchingCategories ? '' : 'style="display:none"'}>
+                        <small>Your shared interests:</small>
+                      </div>
+                      <div>
+                          ${user.matchingCategories ? user.matchingCategories.map(category => {return `<span class="badge badge-pill badge-warning">${category}</span>`}).join('') : ''}
+                      </div>
+                      <div ${user.matchingLikes ? '' : 'style="display:none"'}>
+                        <small>Your coinciding likes:</small>
+                      </div>
+                      <div>
+                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
+                      </div>
+                      
+                </div>
+            </div>`
+  })
+
+  
   $('#matchCardParentContainer').html(htmlOut)
+  $('#phone-pictures').html(phonePictures.join(""))
+  // $('#phone-pictures').html(htmlOut)
+
   $('#addLikesToUser2').on('click', addLikesToUserModal)
   $(".rightArrow").on("click", { d: "n" }, rotate);
   $(".leftArrow").on("click", { d: "p" }, rotate);
