@@ -1,5 +1,7 @@
 $(document).ready(function() {
-  
+    window.USERID = undefined;
+    
+    
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
     $('#privacyPolicyLink').on('click', function() {
@@ -31,8 +33,25 @@ $(document).ready(function() {
    
       return false;
    });
+   
 
     setLoadingScreen(false)
+
+    setInterval(function() {
+        if(USERID){
+            getLocation()
+            .then(locationData => {
+                console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
+                let userData = {}
+                userData.id = USERID
+                userData.location.latitude = locationData.coords.latitude;
+                userData.location.longitude = locationData.coords.longitude;
+                DB.updateUserStatus(userData);
+            }).catch(console.log("error"))
+        }
+    }, 5000)
+   
+    
 })
 
 function clickLogin() {
