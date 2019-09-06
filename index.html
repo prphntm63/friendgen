@@ -23,6 +23,7 @@
 
 </head>
 <body>
+    <div id="fb-root"></div>
       
     <!-- This is the 'loading screen' that will pop up over the page when anything is loading -->
     <div class='loading-screen' id='loadingScreenDiv'>
@@ -51,6 +52,9 @@
             <ul class='navbar-nav ml-auto'>
                 <li class='nav-item'>
                     <a class="nav-link" href='#' id='login'>Login</a>
+                </li>
+                <li class='nav-item'>
+                        <a class="nav-link" href='#' id='messages'>Messages<span class="badge badge-pill badge-warning" id="unreadMessagesBadge"></span></a>
                 </li>
                 <li class='nav-item'>
                     <a class="nav-link" href='#' id='editProfile'>Edit Profile</a>
@@ -299,6 +303,72 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Okay</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" id="messageModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="messageSubject">Subject</label>
+                    <input class="form-control" rows="10" id="messageSubject"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="messageText">Message:</label>
+                    <textarea class="form-control" rows="10" id="messageText"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-warning btn-sm" id="sendMessage">Send Message</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm message sent modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="messageSentModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Message Sent!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Okay</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Inbox Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="inboxModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Inbox</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id='inboxContainer'>
+                    <!-- Messages go here! -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Done</button>
             </div>
             </div>
         </div>
