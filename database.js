@@ -29,7 +29,7 @@
         // }, {merge:true})
         .set(userData, {merge:true})
         .then(querySnapshot => {
-            console.log('Done! - updated'+ userData.id)
+            console.log('Done! - updated '+ userData.id)
             return userData
         })
         .catch(errorSnapshot => {
@@ -73,6 +73,14 @@
         });
     }
 
+    function deleteUserInDb(userData) {
+        return db.collection("users").doc(userData.id)
+        .delete()
+        .catch(err => {
+            console.log('Error deleting document: ', error)
+        })
+    }
+
     function compareUserInDb(userData) {
         console.log('Matching Users ...')
 
@@ -94,6 +102,8 @@
         let userData = userDataDoc.data()
         // let likes = ['cows', 'guitars']
         let likes = userData.likes
+        if (!userData.likes) {return [matchingUsers, userDataDoc]}
+
         let userLikePromises = []
         likes.forEach(like => {
             userLikePromises.push(
@@ -153,6 +163,7 @@
         let userData = userDataDoc.data()
         let categories = userData.categories
         // let categories = ['guitars']
+        if (!userData.categories) {return [matchingUsers, userDataDoc]}
         let userCategoryPromises = []
         categories.forEach(category => {
             userCategoryPromises.push(
@@ -254,6 +265,11 @@
     function returnMatchingUser([matchingUsers, userDataDoc]) {
         console.log('Done!')
         // console.log([matchingUsers, userDataDoc])
+        // We only want the first 6 matching users
+        matchingUsers = matchingUsers.sort(function(a,b) {return b.score - a.score})
+        if (matchingUsers.length > 6) {
+            matchingUsers = matchingUsers.slice(5)
+        }
         return [matchingUsers, userDataDoc]
     }
 
@@ -366,6 +382,7 @@
     window.DB.getMessages = getUserMessages
     window.DB.markMessageRead = markMessageReadInDb
     window.DB.deleteMessage = deleteMessageFromDb
+
 
     
 })();

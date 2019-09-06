@@ -2,7 +2,14 @@ $(document).ready(function() {
   
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
-    $('#privacyPolicyLink').on('click', function() {$('#privacyPolicy').modal('show')})
+    $('#privacyPolicyLink').on('click', function() {
+      $('#privacyPolicy').modal('show')
+    })
+    $('#deleteUserProfile').on('click', function() {
+      $('#addLikesModal').modal('hide')
+      $('#deleteConfirm').modal('show')
+    })
+    $('#deleteUserProfileConfirm').on('click', deleteProfile)
 
     $('#logout').hide() //Hide the user logged in buttons by default
     $('#userBadge').hide()
@@ -106,7 +113,6 @@ function displayData([matchingUsers, userDataDoc]) {
   $('#editProfile').show()
   $('#messages').show()
 
-  // makeUserDiv(userData)
   var sortedMatchingUsers = matchingUsers.sort((a, b) => b.score - a.score);
   makeMatchDivs(sortedMatchingUsers)
   setLoadingScreen(false)
@@ -174,8 +180,7 @@ function populateLikesInModalDialog(userData) {
   let likes = userData.likes;
   let categories = userData.categories;
 
-  let oldText = $('#userLikesInput').val();
-  let newText = likes.join(',')
+  let newText = likes.map(like => {return like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}).join(', ')
   $('#userLikesInput').val(newText)
 
   $('#userCategoriesInput').val(categories)
@@ -186,23 +191,23 @@ function makeUserDiv(userData) { //This function currently is not used but is le
   let name = userData.name
   let dataURL = userData.dataURL
   let htmlOut = `
-        <div class="card mb-3" style=" margin-top: 30px; border: solid 2px grey">
-        <div class="row no-gutters">
-          <div class="col-md-4">
-            <img id="testImage" src="${dataURL ? dataURL : ''}" class="card-img" alt="..." style="height: 100%">
-          </div>
-          <div class="col-md-8">
-            <div class="card-body">
-              
-              <h5 id="userName" class="card-title" style="font-weight: bold">User: ${name}</h5>
-              <p id="userLikes" class="card-text">${likes.join(', ')}</p>
-              <div style="display: flex">
-              
+          <div class="card mb-3" style=" margin-top: 30px; border: solid 2px grey">
+          <div class="row no-gutters">
+            <div class="col-md-4">
+              <img id="testImage" src="${dataURL ? dataURL : ''}" class="card-img" alt="..." style="height: 100%">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                
+                <h5 id="userName" class="card-title" style="font-weight: bold">User: ${name}</h5>
+                <p id="userLikes" class="card-text">${likes.join(', ')}</p>
+                <div style="display: flex">
+                
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
         `
   let newCard = document.createElement('div')
   newCard.innerHTML = htmlOut
@@ -230,7 +235,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     </div>
                     <div class="match-card-body">
                       <div>
-                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                        <h3>${user.name.toLowerCase()}</h3>
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
                         <small>Your shared interests:</small>
@@ -251,22 +256,55 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
     })
   } else {
     htmlOut += `
-                  <div class="revolve-item" style="transform: rotateY(0deg) translateZ(400px)">
-                    <div class="match-image-container">
-                        <img src="/images/noprof.png" alt="/images/noprof.png">
+                    <div class="revolve-item" style="transform: rotateY(360deg) translateZ(400px)">
+                      <div class='leftArrow'>\⟨</div>
+                      <div class='rightArrow'>\⟩</div>
+                      <div class="match-card-body" style="flex-grow:1">
+                        <div>
+                          <h3 class="text-shadow">AW MAN!</h3>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items: center; justify-content:space-evenly; flex-grow:1">
+                          <small>Looks like there's no matching users close to you right now.</small>
+                          <small>Try updating your profile or try again later!</small>
+                          <button type="button" class="btn btn-outline-warning btn-sm" id="addLikesToUser2">Update Profile</button>
+                        </div>
+                      </div>
                     </div>
-                    <div class="match-card-body">
-                        <h3>Sorry!</h3>
-                        <p>Looks like there's no matching users close to you right now.</p>
-                        <p>Try updating your profile or check back later!</p>
-                    </div>
-                  </div>
-    `
-
+                  `
   }
 
+
+  let phonePictures = matchedUsers.map(function(user) {
+    return `<div class="container phone-item">
+              <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+              <div class="match-card-body">
+                      <div>
+                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                      </div>
+                      <div ${user.matchingCategories ? '' : 'style="display:none"'}>
+                        <small>Your shared interests:</small>
+                      </div>
+                      <div>
+                          ${user.matchingCategories ? user.matchingCategories.map(category => {return `<span class="badge badge-pill badge-warning">${category}</span>`}).join('') : ''}
+                      </div>
+                      <div ${user.matchingLikes ? '' : 'style="display:none"'}>
+                        <small>Your coinciding likes:</small>
+                      </div>
+                      <div>
+                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
+                      </div>
+                      
+                </div>
+            </div>`
+  })
+
+  
   $('#matchCardParentContainer').html(htmlOut)
   $('.send-message').on('click', sendMessage)
+  $('#phone-pictures').html(phonePictures.join(""))
+  // $('#phone-pictures').html(htmlOut)
+
+  $('#addLikesToUser2').on('click', addLikesToUserModal)
   $(".rightArrow").on("click", { d: "n" }, rotate);
   $(".leftArrow").on("click", { d: "p" }, rotate);
 
@@ -447,4 +485,16 @@ function replyMessage(event) {
   console.log('replied to message - '+messageId)
 }
 
+function deleteProfile() {
+  let userData = {
+    id: USERID
+  }
 
+  DB.deleteUser(userData)
+  .then(function() {
+    $('#deleteConfirm').modal('hide')
+    $('#deleteSuccess').modal('show')
+    logout()
+  })
+  
+}
