@@ -45,7 +45,7 @@ $(document).ready(function() {
       if(USERID){
           getLocation()
           .then(locationData => {
-              console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
+              // console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
               let userData = {}
               userData.id = USERID
               userData.location = {}
@@ -288,11 +288,13 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
                         <img src="${user.dataURL}" alt="/images/noprof.png">
+                        <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
+
                     </div>
                     <div class="match-card-body">
                       <div>
                         <h3>${user.name ? user.name.toUpperCase() : ''}</h3>
-                        <div class="badge badge-pill badge-light send-message">Send Message!</div>
+                       
 
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
@@ -307,6 +309,9 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                           ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
                         </div>
                       </div>
+
+                      
+                     
                     </div>
                   </div>
       `
@@ -334,7 +339,11 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
 
   let phonePictures = matchedUsers.map(function(user) {
     return `<div class="container phone-item">
-              <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+              <div>
+                <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+                <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
+
+              </div>
               <div class="match-card-body">
                       <div>
                         <h3 class="text-shadow">${user.name ? user.name.toUpperCase() : ''}</h3>
@@ -351,6 +360,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                       <div>
                           ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
                       </div>
+
                       
                 </div>
             </div>`

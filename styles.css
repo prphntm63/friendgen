@@ -63,11 +63,13 @@ body{
     background-color:  white;
 }
 .badge-warning {
-    background-color:  #fef648;
+    background-color: white;
+    /* border: solid 1px black; */
 }
 .badge-secondary{
+    background-color:  white;
     color: black;
-    background-color: #b6c8d2;
+    /* border: solid 1px black; */
 }
 
 /* style overwrites for card carousel */
@@ -78,9 +80,7 @@ body{
 .badge {
     font-weight: 400;
 }
-.match-card-body{
-    margin:auto;
-}
+
 .match-card-body h3{
     font-family: 'Oswald', sans-serif;
     color: black;
@@ -391,6 +391,7 @@ body {
       overflow: hidden;
       padding: 10px;
       width: 200px;
+      min-width:200px;
   }
 
   .match-image-container > img {
@@ -418,6 +419,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   }
 
   .rightArrow {
@@ -436,6 +438,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   }
 
   .footer-toc {
@@ -447,8 +450,10 @@ body {
 }
 
 .send-message {
+    font-family: 'Oswald', sans-serif;
+    border: solid 1px;
     position: relative;
-    bottom: 20px;
+    bottom: 25px;
     left: 0;
     right: 0;
     margin-left: auto;
@@ -456,6 +461,9 @@ body {
     cursor: pointer;
 }
 
+.badge-light{
+    background-color: #fef648;
+}
 .unread {
     background-color: #fff;
 }
@@ -485,6 +493,11 @@ body {
     overflow-x: hidden;
 }
 
+@media only screen and (min-width: 740px) {
+    .match-card-body{
+        margin:auto;
+    }
+}
 /* MOBILE CSS STYLES */
 
 #phone-pictures {
@@ -512,13 +525,14 @@ body {
         flex-direction: row;
         align-items: center;
         background: white;
-        width: 400px;
+        /* width: 400px; */
         height: 200px;
         text-align: center;
         color: black;
         border: 3px solid gray;
         border-radius: 10px;
-        padding: 50px;
+        padding: 20px;
+        margin-top:50px;
     
       }
     #phone-pictures {
