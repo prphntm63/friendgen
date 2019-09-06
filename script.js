@@ -41,20 +41,20 @@ $(document).ready(function() {
     setLoadingScreen(false)
 
     setInterval(function() {
-        if(USERID){
-            getLocation()
-            .then(locationData => {
-                let userData = {}
-                userData.id = USERID
-                userData.location = {}
-                userData.location.lat = locationData.coords.latitude;
-                userData.location.lon = locationData.coords.longitude;
-                DB.updateUserStatus(userData);
-                updateUnreadMessageBadge()
-            })
-            .catch(console.log("error"))
-        }
-    }, 60000) //Update every 60 seconds
+      if ( document.hidden ) { return; }
+      if(USERID){
+          getLocation()
+          .then(locationData => {
+              console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
+              let userData = {}
+              userData.id = USERID
+              userData.location = {}
+              userData.location.lat = locationData.coords.latitude;
+              userData.location.lon = locationData.coords.longitude;
+              DB.updateUserStatus(userData);
+          }).catch(console.log("error"))
+      }
+    }, 60000)
    
     
 })
