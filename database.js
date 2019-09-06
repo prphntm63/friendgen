@@ -38,14 +38,16 @@
         })
     }
 
+    
     function updateUserStatus(userData) {
         console.log('Updating User...')
+        console.log('userData', userData)
 
         return db.collection("users").doc(userData.id)
         .update({
             location: {
-                lat: userData.lat,
-                lon: userData.lon
+                lat: userData.location.lat,
+                lon: userData.location.lon
             },
             lastFix : firebase.firestore.Timestamp.now()
         })
@@ -57,6 +59,8 @@
             console.log(errorSnapshot)
         })
     }
+
+    
 
     function getUserFromDb(userData) {
         console.log('Getting User...')

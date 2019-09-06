@@ -44,12 +44,13 @@ $(document).ready(function() {
                 console.log(USERID, locationData.coords.latitude, locationData.coords.longitude)
                 let userData = {}
                 userData.id = USERID
-                userData.location.latitude = locationData.coords.latitude;
-                userData.location.longitude = locationData.coords.longitude;
+                userData.location = {}
+                userData.location.lat = locationData.coords.latitude;
+                userData.location.lon = locationData.coords.longitude;
                 DB.updateUserStatus(userData);
             }).catch(console.log("error"))
         }
-    }, 5000)
+    }, 60000)
    
     
 })
@@ -220,7 +221,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     </div>
                     <div class="match-card-body">
                       <div>
-                        <h3 class="text-shadow">${user.name.toUpperCase()}</h3>
+                        <h3 class="text-shadow">${user.name ? user.name.toUpperCase() : ''}</h3>
                       </div>
                       <div ${user.matchingCategories ? '' : 'style="display:none"'}>
                         <small>Your shared interests:</small>
