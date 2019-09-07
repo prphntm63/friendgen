@@ -445,6 +445,7 @@
     window.DB.deleteMessage = deleteMessageFromDb
     window.DB.authenticate = authenticateDb
     window.DB.deauth = deauthenticateDb
+    window.DB.deleteUser = deleteUserInDb
 
 
     
