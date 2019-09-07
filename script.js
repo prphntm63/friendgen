@@ -118,8 +118,8 @@ function getData() {
   })
   .then(DB.authenticate) //authenticate with DB
   .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
-  .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.updateUserInfo) //update user info from fb and location data in DB
+  .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.compareUser) //compare user to others in DB and return matching users
   .catch(err => {
     console.log('Error! could not get data - ', err)
