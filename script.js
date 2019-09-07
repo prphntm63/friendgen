@@ -286,7 +286,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     <div class='leftArrow'>\⟨</div>
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
-                        <img src="${user.dataURL}" alt="/images/noprof.png">
+                        <img src="${user.dataURL ? user.dataURL :'/images/noprof.png' }" alt="/images/noprof.png">
                         <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
 
                     </div>
@@ -339,7 +339,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
   let phonePictures = matchedUsers.map(function(user) {
     return `<div class="container phone-item">
               <div>
-                <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+                <img style=" height: 150px" src="${user.dataURL ? user.dataURL: 'images/noprof.png' }" alt="images/noprof.png">
                 <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
 
               </div>
