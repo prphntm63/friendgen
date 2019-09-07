@@ -24,9 +24,6 @@ function getFacebookData() {
             if (response.authResponse) {           
                 getUserData(response);              
             } else {
-                // $('#loadingScreenDiv').hide()
-                // $('#noAuthorizedLogin').modal('show')
-                // $('#refreshPage').on('click', function() {location.reload()})
                 reject(
                     'User cancelled login or did not fully authorize.',  
                     $('#loadingScreenDiv').hide(),
