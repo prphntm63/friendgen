@@ -183,11 +183,10 @@ function updateUnreadMessageBadge(userData) {
     DB.getUser(userData)
     .then(userDocument => {
       let userDocumentData = userDocument.data();
-      let messages = userDocumentData.messages;
 
       let unreadMessageCounter = 0;
-      if(messages){
-        messages.forEach(message => {
+      if(userDocumentData.messages){
+        userDocumentData.messages.forEach(message => {
           if (message.unread) {
             unreadMessageCounter++
           }
