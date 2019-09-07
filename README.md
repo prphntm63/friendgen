@@ -1,8 +1,21 @@
 # FriendGen
-Find new friends in your immediate area
+Find and connect to new friends in your immediate area.
 
 ## About
-Phase 1 project for DigitalCrafts - an application to find new friends in your area
+Welcome to FreindGen!  It's an App that matches you to other users with similar interests in your immediate georaphical locale.  And if you like, you can message your matches to connect.
+
+## Get Started
+- Go to https://friendgen.net
+- Login through FB
+- Customize Profile
+- Meet new friends!
+
+
+## App Features
+- Authentication through FB login
+- Customizable User Profile
+- Direct Messaging
+- Mobile Friendly
 
 ## Project Members
 - Matt Westwick
@@ -10,22 +23,23 @@ Phase 1 project for DigitalCrafts - an application to find new friends in your a
 - Jeff Harris
 - Andy Nguyen
 
+## Languages Used
+ - HTML
+ - CSS
+ - JavaScript
+ - jQuery
+
 ## APIs used
 - Firebase for DB Storage
-- IP Geolocation service
-- Facebook / Graph for user information
-- Method of determining age of last fix
+- HTML Geolocation API
+- Facebook SDK / Graph API for user information
 
-## [Project Trello Board](https://trello.com/b/LyvdmQbp/friendgen)
-- Owned by Jeff
+## Tools
+- [Project Trello Board](https://trello.com/b/LyvdmQbp/friendgen)
+- Travis CI
+- Firebase CLI
 
 ## Libraries Used
 - Bootstrap
-- D3.js (?)
+- Google Fonts 
 
-## Schedule
-- Day 1: Assignments
-  - Matt: Firebase (database)
-  - Andy: Site Design (Bootstrap) / Graph API Login
-  - Pia: User FB Data and Matching Algorithm (Graph API)
-  - Jeff: Finding User Location (IP Location API)
