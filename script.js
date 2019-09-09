@@ -118,8 +118,8 @@ function getData() {
   })
   .then(DB.authenticate) //authenticate with DB
   .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
-  .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.updateUserInfo) //update user info from fb and location data in DB
+  .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
   .then(DB.compareUser) //compare user to others in DB and return matching users
   .catch(err => {
     console.log('Error! could not get data - ', err)
@@ -183,11 +183,10 @@ function updateUnreadMessageBadge(userData) {
     DB.getUser(userData)
     .then(userDocument => {
       let userDocumentData = userDocument.data();
-      let messages = userDocumentData.messages;
 
       let unreadMessageCounter = 0;
-      if(messages){
-        messages.forEach(message => {
+      if(userDocumentData.messages){
+        userDocumentData.messages.forEach(message => {
           if (message.unread) {
             unreadMessageCounter++
           }
@@ -287,7 +286,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
                     <div class='leftArrow'>\⟨</div>
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
-                        <img src="${user.dataURL}" alt="/images/noprof.png">
+                        <img src="${user.dataURL ? user.dataURL :'/images/noprof.png' }" alt="/images/noprof.png">
                         <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
 
                     </div>
@@ -340,7 +339,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
   let phonePictures = matchedUsers.map(function(user) {
     return `<div class="container phone-item">
               <div>
-                <img style=" height: 150px" src="${user.dataURL}" alt="user picture">
+                <img style=" height: 150px" src="${user.dataURL ? user.dataURL: 'images/noprof.png' }" alt="images/noprof.png">
                 <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
 
               </div>
