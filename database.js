@@ -305,7 +305,7 @@
                 "messageId":generateUUID(),
                 "subject":message.subject,
                 "message":message.text,
-                "sender":currentUser,
+                "sender":currentUser.uid,
                 "unread":true
             }),
         }, {merge:true})
