@@ -11,13 +11,15 @@
 
     function updateUserInfo(userData) {
 
+        let currentUser = firebase.auth().currentUser
+
         // userData is an array containing {"id":Facebook ID, "lat":latitude, "lon":longitude, "interest":array of interests, "profilePic":64-bit encoded image data}
 
         console.log('Updating User...')
 
         userData.lastFix = firebase.firestore.Timestamp.now()
 
-        return db.collection("users").doc(userData.id)
+        // return db.collection("users").doc(userData.id)
         // .set({
         //     // likes: firebase.firestore.FieldValue.arrayUnion(userData.interest),
         //     name : userData.name,
@@ -27,9 +29,10 @@
         //     lastFix : firebase.firestore.Timestamp.now(),
         //     dataURL: userData.dataURL
         // }, {merge:true})
+        return db.collection("users").doc(currentUser.uid)
         .set(userData, {merge:true})
         .then(querySnapshot => {
-            console.log('Done! - updated '+ userData.id)
+            console.log('Done! - updated '+ currentUser.uid)
             return userData
         })
         .catch(errorSnapshot => {
@@ -41,8 +44,10 @@
     
     function updateUserStatus(userData) {
         console.log('Updating User...')
+        let currentUser = firebase.auth().currentUser
 
-        return db.collection("users").doc(userData.id)
+        // return db.collection("users").doc(userData.id)
+        return db.collection("users").doc(currentUser.uid)
         .update({
             location: {
                 lat: userData.location.lat,
@@ -63,8 +68,10 @@
 
     function getUserFromDb(userData) {
         console.log('Getting User...')
+        let currentUser = firebase.auth().currentUser
 
-        return db.collection("users").doc(userData.id)
+        // return db.collection("users").doc(userData.id)
+        return db.collection("users").doc(currentUser.uid)
         .get()
         .then(function(doc) {
             console.log("Done!")
@@ -77,7 +84,10 @@
     }
 
     function deleteUserInDb(userData) {
-        return db.collection("users").doc(userData.id)
+        let currentUser = firebase.auth().currentUser
+
+        // return db.collection("users").doc(userData.id)
+        return db.collection("users").doc(currentUser.uid)
         .delete()
         .catch(err => {
             console.log('Error deleting document: ', error)
@@ -287,7 +297,7 @@
 
     function sendUserMessage(userData, targetUser, message) {
         // Both userData and targeteUser are User objects
-        console.log(userData.id, message.text, message.subject)
+        let currentUser = firebase.auth().currentUser
 
         return db.collection("users").doc(targetUser.id)
         .set({
@@ -295,7 +305,7 @@
                 "messageId":generateUUID(),
                 "subject":message.subject,
                 "message":message.text,
-                "sender":userData.id,
+                "sender":currentUser,
                 "unread":true
             }),
         }, {merge:true})
@@ -335,7 +345,9 @@
 
 
     function markMessageReadInDb(messageId) {
-        return getUserMessages({"id":USERID})
+        let currentUser = firebase.auth().currentUser
+
+        return getUserMessages({"id":currentUser.uid})
         .then(messages => {
             for (let idx=0; idx<messages.length; idx++) {
                 if (messages[idx].messageId == messageId) {
@@ -361,7 +373,9 @@
     }
 
     function deleteMessageFromDb(messageId) {
-        return getUserMessages({"id":USERID})
+        let currentUser = firebase.auth().currentUser
+
+        return getUserMessages({"id":currentUser.uid})
         .then(messages => {
             for (let idx=0; idx<messages.length; idx++) {
                 if (messages[idx].messageId == messageId) {
@@ -371,7 +385,7 @@
             }
         })
         .then(messages => {
-            return db.collection("users").doc(USERID)
+            return db.collection("users").doc(currentUser.uid)
             .set({
                 "messages" : messages
             }, {merge:true})
@@ -385,7 +399,7 @@
         })
     }
 
-    function authenticateDb(userData) {
+    function authenticateAnonDb(userData) {
         let dbAuthPromise = new Promise(function(resolve, reject) {
           return firebase.auth().signInAnonymously()
           .then(function() {
@@ -398,6 +412,23 @@
         })
       
         return dbAuthPromise
+    }
+
+    function authenticateFacebookDb(response) {
+        let authToken = firebase.auth.FacebookAuthProvider.credential(response.authResponse.accessToken)
+
+        let fbAuthPromise = new Promise(function (resolve, reject) {
+            return firebase.auth().signInWithCredential(authToken)
+            .then(function(user) {
+                console.log('Successfully authenticated through FB - ', user.uid)
+                resolve(response)
+            })
+            .catch(error => {
+                console.log('Error authenticating with Facebook - ' , error)
+            })
+        })
+
+        return fbAuthPromise
     }
 
     function deauthenticateDb() {
@@ -414,7 +445,7 @@
     }
 
     function getMessageFromMessageId(messageId) {
-        return getUserMessages({"id":USERID})
+        return getUserMessages({"id":currentUser.uid})
         .then(messages => {
             for (let idx=0; idx<messages.length; idx++) {
                 if (messages[idx].messageId == messageId) {
@@ -443,9 +474,10 @@
     window.DB.getMessageFromMessageId = getMessageFromMessageId
     window.DB.markMessageRead = markMessageReadInDb
     window.DB.deleteMessage = deleteMessageFromDb
-    window.DB.authenticate = authenticateDb
+    window.DB.authenticateAnon = authenticateAnonDb
     window.DB.deauth = deauthenticateDb
     window.DB.deleteUser = deleteUserInDb
+    window.DB.authenticateFB = authenticateFacebookDb
 
 
     

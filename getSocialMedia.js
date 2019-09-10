@@ -1,7 +1,8 @@
  //initialize and setup the SDK    
  window.fbAsyncInit = function() {
     FB.init({                                      
-      appId            : '931960383805197',      
+    //   appId            : '931960383805197',   //Production
+      appId            : '2344879292496049',      //Test
       autoLogAppEvents : true,
       version          : 'v4.0',
     });
@@ -21,8 +22,10 @@ function getFacebookData() {
     
         //handle user response
         function ifAuthorized(response){             //response is {name: "Pia Soy", id: "10156251899951436"}    
-            if (response.authResponse) {           
-                getUserData(response);              
+            if (response.authResponse) {  
+                DB.authenticateFB(response)         
+                .then(getUserData)
+                          
             } else {
                 reject(
                     'User cancelled login or did not fully authorize.',  
