@@ -397,6 +397,61 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
     });
   }
 
+  $(document).on('keypress', spin)
+
+  function spin(e) {
+    if (e.key != 's') return
+    carousel.css({
+      "-webkit-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
+      "-moz-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
+      "-o-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
+      "transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)"
+    });
+    let oldCurrDeg = currdeg
+    currdeg = Math.floor((currdeg-1080)/360)*360
+    let difference = Math.abs(oldCurrDeg - currdeg)
+    let apex = Math.round(difference / 2)
+
+    $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+    function() {
+
+      carousel.css({
+        "-webkit-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
+        "-moz-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
+        "-o-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
+        "transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
+        "transition-timing-function" : "ease-in"
+      });
+
+      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+      function() {
+
+        carousel.css({
+          "-webkit-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
+          "-moz-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
+          "-o-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
+          "transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
+          "transition-timing-function" : "ease-out"
+        });
+
+        $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+        function() {
+
+          carousel.css({
+            "-webkit-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
+            "-moz-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
+            "-o-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
+            "transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
+            "transition-timing-function" : "ease"
+          });
+
+        });
+
+      });
+
+    });
+  }
+
   function sendMessage(event) {
     event.stopPropagation();
     let targetUser = {"id":event.currentTarget.parentNode.parentNode.id};
