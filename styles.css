@@ -404,6 +404,8 @@ body {
   }
 
   .leftArrow {
+    visibility: hidden;
+    opacity:0;
     padding: 0;
     position: absolute;
     left: -20px;
@@ -420,9 +422,16 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    -webkit-transition: opacity .5s ease;
+    -moz-transition: opacity .5s ease;
+     -ms-transition: opacity .5s ease;
+      -o-transition: opacity .5s ease;
+         transition: opacity .5s ease;
   }
 
   .rightArrow {
+    visibility: hidden;
+    opacity:0;
     padding: 0;
     position: absolute;
     right: -20px;
@@ -439,9 +448,20 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    -webkit-transition: opacity .5s ease;
+    -moz-transition: opacity .5s ease;
+     -ms-transition: opacity .5s ease;
+      -o-transition: opacity .5s ease;
+         transition: opacity .5s ease;
   }
 
-  .footer-toc {
+.revolve-active .leftArrow,.revolve-active .rightArrow {
+    visibility: visible;
+    opacity: 0.85;
+
+}
+
+.footer-toc {
     position: fixed;
     bottom: 0px;
     left: 0px;

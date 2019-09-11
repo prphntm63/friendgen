@@ -285,7 +285,7 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
 
     matchedUsers.forEach(user => {
       htmlOut += `
-                  <div class="revolve-item" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)" id="${user.id}">
+                  <div class="revolve-item " id="revolve${counter}" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)" id="${user.id}">
                     <div class='leftArrow'>\⟨</div>
                     <div class='rightArrow'>\⟩</div>
                     <div class="match-image-container">
@@ -381,13 +381,26 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
   // New carousel
   var carousel = $(".revolve"),
     currdeg  = 0;
+    activeCounter = 0;
   
   function rotate(e){
     if(e.data.d=="n" && degreeDivisions){
+      activeCounter++;
       currdeg = currdeg - degreeDivisions;
+      $(".revolve-active").removeClass('revolve-active')
+      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+      function() {
+        $(`#revolve${Math.floor((matchedUsers.length+(activeCounter%matchedUsers.length))%matchedUsers.length)}`).addClass('revolve-active')
+      })
     }
     if(e.data.d=="p" && degreeDivisions){
+      activeCounter--;
       currdeg = currdeg + degreeDivisions;
+      $(".revolve-active").removeClass('revolve-active')
+      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
+      function() {
+        $(`#revolve${Math.floor((matchedUsers.length+(activeCounter%matchedUsers.length))%matchedUsers.length)}`).addClass('revolve-active')
+      })
     }
     carousel.css({
       "-webkit-transform": "rotateY("+currdeg+"deg)",
@@ -397,20 +410,16 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
     });
   }
 
-  $(document).on('keypress', spin)
+  spin()
 
   function spin(e) {
-    if (e.key != 's') return
     carousel.css({
       "-webkit-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
       "-moz-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
       "-o-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
       "transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)"
     });
-    let oldCurrDeg = currdeg
     currdeg = Math.floor((currdeg-1080)/360)*360
-    let difference = Math.abs(oldCurrDeg - currdeg)
-    let apex = Math.round(difference / 2)
 
     $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
     function() {
@@ -445,6 +454,11 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
             "transition-timing-function" : "ease"
           });
 
+          $('#revolve0').addClass('revolve-active')
+
+          $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function() {
+            $(".revolve").unbind()
+          })
         });
 
       });
