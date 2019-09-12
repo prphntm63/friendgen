@@ -52,7 +52,10 @@ $(document).ready(function() {
               userData.location.lat = locationData.coords.latitude;
               userData.location.lon = locationData.coords.longitude;
               DB.updateUserStatus(userData);
-          }).catch(console.log("error"))
+          })
+          .catch(error => {
+            console.log("Error updating location - ", error)
+          })
       }
     }, 60000)
    
@@ -116,7 +119,7 @@ function getData() {
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
-  .then(DB.authenticate) //authenticate with DB
+  // .then(DB.authenticateAnon) //authenticate with DB - REMOVED to allow higher security auth with facebook
   .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
   .then(DB.updateUserInfo) //update user info from fb and location data in DB
   .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
