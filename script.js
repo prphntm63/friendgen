@@ -1,6 +1,5 @@
 $(document).ready(function() {
-    window.USERID = undefined;
-    
+    window.USERID = undefined
     
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
     $('#updateUserLikes').on('click', updateUserLikesFromModal)
@@ -65,8 +64,10 @@ $(document).ready(function() {
 function clickLogin() {
   $('#main-div').hide() //Hide the main login button
   
-  setLoadingScreen(true) //set loading
-  
+  // setLoadingScreen(true) //set loading
+  makeLoadingDivs()
+  spinCarousel()
+
   getData() //Get user and matching users from database
   .then(displayData) //render data
 }
@@ -142,7 +143,8 @@ function displayData([matchingUsers, userDataDoc]) {
 
   var sortedMatchingUsers = matchingUsers.sort((a, b) => b.score - a.score);
   makeMatchDivs(sortedMatchingUsers)
-  setLoadingScreen(false)
+  REVOLVE.stop = true;
+  // setLoadingScreen(false)
 }
 
 function checkForNewUser(userData) {
@@ -245,253 +247,34 @@ function updateLikesInList(event) {
   document.getSelection().collapseToEnd();
 }
 
-function makeUserDiv(userData) { //This function currently is not used but is left intact in case it is needed in the future
-  let likes = userData.likes 
-  let name = userData.name
-  let dataURL = userData.dataURL
-  let htmlOut = `
-          <div class="card mb-3" style=" margin-top: 30px; border: solid 2px grey">
-          <div class="row no-gutters">
-            <div class="col-md-4">
-              <img id="testImage" src="${dataURL ? dataURL : ''}" class="card-img" alt="..." style="height: 100%">
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                
-                <h5 id="userName" class="card-title" style="font-weight: bold">User: ${name}</h5>
-                <p id="userLikes" class="card-text">${likes.join(', ')}</p>
-                <div style="display: flex">
-                
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        `
-  let newCard = document.createElement('div')
-  newCard.innerHTML = htmlOut
-  document.getElementById("cardDiv").innerHTML = ''
-  document.getElementById("cardDiv").appendChild(newCard)
 
-}
 
-function makeMatchDivs(matchedUsers) { //Create cards for matched users
-  let htmlOut = ``
-  let degreeDivisions = 0;
+function sendMessage(event) {
+  event.stopPropagation();
+  let targetUser = {"id":event.currentTarget.parentNode.parentNode.id};
+  let userData = {"id":USERID};
+  $('#messageModal').modal('show')
+  $('#sendMessage').on('click', function(){
+    $('#sendMessage').unbind()
+    let messageText = $('#messageText').val()
+    let messageSubject = $('#messageSubject').val()
+    messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let message = {"subject":messageSubject,"text":messageText};
 
-  if (matchedUsers.length) {
-    degreeDivisions = 360/matchedUsers.length
-    let counter = 0;
-
-    matchedUsers.forEach(user => {
-      htmlOut += `
-                  <div class="revolve-item " id="revolve${counter}" style="transform: rotateY(${counter*degreeDivisions}deg) translateZ(400px)" id="${user.id}">
-                    <div class='leftArrow'>\⟨</div>
-                    <div class='rightArrow'>\⟩</div>
-                    <div class="match-image-container">
-                        <img src="${user.dataURL ? user.dataURL :'/images/noprof.png' }" alt="/images/noprof.png">
-                        <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
-
-                    </div>
-                    <div class="match-card-body">
-                      <div>
-                        <h3>${user.name ? user.name.toUpperCase() : ''}</h3>
-                       
-
-                      </div>
-                      <div ${user.matchingCategories ? '' : 'style="display:none"'}>
-                        <small>Your shared interests:</small>
-                        <div>
-                          ${user.matchingCategories ? user.matchingCategories.map(category => {return `<span class="badge badge-pill badge-warning">${category}</span>`}).join('') : ''}
-                        </div>
-                      </div>
-                      <div ${user.matchingLikes ? '' : 'style="display:none"'}>
-                        <small>Your coinciding likes:</small>
-                        <div>
-                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
-                        </div>
-                      </div>
-
-                      
-                     
-                    </div>
-                  </div>
-      `
-      counter++
+    DB.sendMessage(userData, targetUser, message)
+    .then(function() {
+      $('#messageText').val('')
+      $('#messageSubject').val('')
+      $('#messageModal').modal('hide')
+      $('#messageSentModal').modal('show')
+      console.log('Message sent!')
     })
-  } else {
-    htmlOut += `
-                    <div class="revolve-item" style="transform: rotateY(360deg) translateZ(400px)">
-                      <div class='leftArrow'>\⟨</div>
-                      <div class='rightArrow'>\⟩</div>
-                      <div class="match-card-body" style="flex-grow:1">
-                        <div>
-                          <h3 class="text-shadow">AW MAN!</h3>
-                        </div>
-                        <div style="display:flex; flex-direction:column; align-items: center; justify-content:space-evenly; flex-grow:1">
-                          <small>Looks like there's no matching users close to you right now.</small>
-                          <small>Try updating your profile or try again later!</small>
-                          <button type="button" class="btn btn-outline-warning btn-sm" id="addLikesToUser2">Update Profile</button>
-                        </div>
-                      </div>
-                    </div>
-                  `
-  }
-
-
-  let phonePictures = matchedUsers.map(function(user) {
-    return `<div class="container phone-item">
-              <div>
-                <img style=" height: 150px" src="${user.dataURL ? user.dataURL: 'images/noprof.png' }" alt="images/noprof.png">
-                <div class="badge badge-pill badge-light send-message">Message ${user.name ? user.name : 'Me'}!</div>
-
-              </div>
-              <div class="match-card-body">
-                      <div>
-                        <h3 class="text-shadow">${user.name ? user.name.toUpperCase() : ''}</h3>
-                      </div>
-                      <div ${user.matchingCategories ? '' : 'style="display:none"'}>
-                        <small>Your shared interests:</small>
-                      </div>
-                      <div>
-                          ${user.matchingCategories ? user.matchingCategories.map(category => {return `<span class="badge badge-pill badge-warning">${category}</span>`}).join('') : ''}
-                      </div>
-                      <div ${user.matchingLikes ? '' : 'style="display:none"'}>
-                        <small>Your coinciding likes:</small>
-                      </div>
-                      <div>
-                          ${user.matchingLikes ? user.matchingLikes.map(like => {return `<span class="badge badge-pill badge-secondary">${like.trim().charAt(0).toUpperCase() + like.trim().slice(1)}</span>`}).join('') : ''}
-                      </div>
-
-                      
-                </div>
-            </div>`
+    .catch(error => {
+      console.log('Message not sent...')
+    })
   })
-
-  
-  $('#matchCardParentContainer').html(htmlOut)
-  $('.send-message').on('click', sendMessage)
-  $('#phone-pictures').html(phonePictures.join(""))
-  // $('#phone-pictures').html(htmlOut)
-
-  $('#addLikesToUser2').on('click', addLikesToUserModal)
-  $(".rightArrow").on("click", { d: "n" }, rotate);
-  $(".leftArrow").on("click", { d: "p" }, rotate);
-
-  // New carousel
-  var carousel = $(".revolve"),
-    currdeg  = 0;
-    activeCounter = 0;
-  
-  function rotate(e){
-    if(e.data.d=="n" && degreeDivisions){
-      activeCounter++;
-      currdeg = currdeg - degreeDivisions;
-      $(".revolve-active").removeClass('revolve-active')
-      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
-      function() {
-        $(`#revolve${Math.floor((matchedUsers.length+(activeCounter%matchedUsers.length))%matchedUsers.length)}`).addClass('revolve-active')
-      })
-    }
-    if(e.data.d=="p" && degreeDivisions){
-      activeCounter--;
-      currdeg = currdeg + degreeDivisions;
-      $(".revolve-active").removeClass('revolve-active')
-      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
-      function() {
-        $(`#revolve${Math.floor((matchedUsers.length+(activeCounter%matchedUsers.length))%matchedUsers.length)}`).addClass('revolve-active')
-      })
-    }
-    carousel.css({
-      "-webkit-transform": "rotateY("+currdeg+"deg)",
-      "-moz-transform": "rotateY("+currdeg+"deg)",
-      "-o-transform": "rotateY("+currdeg+"deg)",
-      "transform": "rotateY("+currdeg+"deg)"
-    });
-  }
-
-  spin()
-
-  function spin(e) {
-    carousel.css({
-      "-webkit-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
-      "-moz-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
-      "-o-transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)",
-      "transform": "rotateY("+(currdeg+170)+"deg) translate(0px, -10px)"
-    });
-    currdeg = Math.floor((currdeg-1080)/360)*360
-
-    $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
-    function() {
-
-      carousel.css({
-        "-webkit-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
-        "-moz-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
-        "-o-transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
-        "transform": "rotateY("+(Math.round(currdeg/2))+"deg) translate(0px, 50px)",
-        "transition-timing-function" : "ease-in"
-      });
-
-      $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
-      function() {
-
-        carousel.css({
-          "-webkit-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
-          "-moz-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
-          "-o-transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
-          "transform": "rotateY("+(currdeg-120)+"deg) translate(0px, -20px)",
-          "transition-timing-function" : "ease-out"
-        });
-
-        $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', 
-        function() {
-
-          carousel.css({
-            "-webkit-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
-            "-moz-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
-            "-o-transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
-            "transform": "rotateY("+currdeg+"deg) translate(0px, 0px)",
-            "transition-timing-function" : "ease"
-          });
-
-          $('#revolve0').addClass('revolve-active')
-
-          $(".revolve").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd', function() {
-            $(".revolve").unbind()
-          })
-        });
-
-      });
-
-    });
-  }
-
-  function sendMessage(event) {
-    event.stopPropagation();
-    let targetUser = {"id":event.currentTarget.parentNode.parentNode.id};
-    let userData = {"id":USERID};
-    $('#messageModal').modal('show')
-    $('#sendMessage').on('click', function(){
-      $('#sendMessage').unbind()
-      let messageText = $('#messageText').val()
-      let messageSubject = $('#messageSubject').val()
-      messageText = messageText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      let message = {"subject":messageSubject,"text":messageText};
-
-      DB.sendMessage(userData, targetUser, message)
-      .then(function() {
-        $('#messageText').val('')
-        $('#messageSubject').val('')
-        $('#messageModal').modal('hide')
-        $('#messageSentModal').modal('show')
-        console.log('Message sent!')
-      })
-      .catch(error => {
-        console.log('Message not sent...')
-      })
-    })
-  }
 }
+
 
 function addLikesToUserModal() { //This function simply dismisses the 'alert-no likes' modal and calls the 'change user likes' modal
     $('#noLikesModal').modal('hide')
@@ -502,7 +285,7 @@ function addLikesToUserModal() { //This function simply dismisses the 'alert-no 
 
 function updateUserLikesFromModal() {
     $('#addLikesModal').modal('hide')
-    setLoadingScreen(true)
+    // setLoadingScreen(true)
     let userLikesString = $('#userLikesInput').html()
     // let userLikesRaw = userLikesString.split(',') 
     $('#userLikesInput').find('.xRemove').replaceWith(',')

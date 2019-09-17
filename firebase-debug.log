@@ -1,0 +1,29 @@
+[debug] [2019-09-17T20:54:00.306Z] ----------------------------------------------------------------------
+[debug] [2019-09-17T20:54:00.308Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2019-09-17T20:54:00.308Z] CLI Version:   7.3.1
+[debug] [2019-09-17T20:54:00.308Z] Platform:      darwin
+[debug] [2019-09-17T20:54:00.308Z] Node Version:  v10.16.0
+[debug] [2019-09-17T20:54:00.309Z] Time:          Tue Sep 17 2019 15:54:00 GMT-0500 (Central Daylight Time)
+[debug] [2019-09-17T20:54:00.309Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-09-17T20:54:00.321Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-09-17T20:54:00.322Z] > authorizing via signed-in user
+[debug] [2019-09-17T20:54:00.322Z] [iam] checking project friendgen for permissions ["firebase.projects.get"]
+[debug] [2019-09-17T20:54:00.323Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-09-17T20:54:00.324Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-09-17T20:54:00.467Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-17T20:54:00.485Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/friendgen:testIamPermissions  
+
+[debug] [2019-09-17T20:54:00.664Z] <<< HTTP RESPONSE 200
+[debug] [2019-09-17T20:54:00.666Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/friendgen  
+ 
+[debug] [2019-09-17T20:54:00.909Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/mattwestwick/digitalcrafts/friendgen'...
+[info] 
+[debug] [2019-09-17T20:54:00.912Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/friendgen/webApps/-/config  
+ 
+[debug] [2019-09-17T20:54:01.278Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ../friendgen
+[info] ✔  hosting: Local server: http://localhost:5000
