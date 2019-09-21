@@ -1,8 +1,8 @@
  //initialize and setup the SDK    
  window.fbAsyncInit = function() {
     FB.init({                                      
-    //   appId            : '931960383805197',   //Production
-      appId            : '2344879292496049',      //Test
+      appId            : '931960383805197',   //Production
+    //   appId            : '2344879292496049',      //Test
       autoLogAppEvents : true,
       version          : 'v4.0',
     });
