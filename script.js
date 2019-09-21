@@ -1,5 +1,13 @@
 $(document).ready(function() {
     window.USERID = undefined;
+
+    // Check to see if user is trying to acces privacy policy and if so pop it up
+    var url = document.location.href;
+
+    if (url.indexOf('privacy-and-terms') >= 0) {
+      $('#privacyPolicy').modal('show')
+      window.history.pushState('', 'FriendGen', '/');
+    }
     
     
     $('#addLikesToUser').on('click', addLikesToUserModal) // These are the 'submit' buttons on the modal dialogs
