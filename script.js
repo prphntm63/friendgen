@@ -18,6 +18,8 @@ $(document).ready(function() {
     $('#editProfile').hide()
     $('#messages').hide()
     $('#unreadMessagesBadge').hide()
+    $('.revolve-container').fadeTo("fast", 0, function(){})
+    // $('#phoneContainer').fadeTo("fast", 0, function(){})
 
     // Navbar 'edit profile' and 'logout' options
     $('#editProfile').on('click', addLikesToUserModal)
@@ -52,7 +54,10 @@ $(document).ready(function() {
               userData.location.lat = locationData.coords.latitude;
               userData.location.lon = locationData.coords.longitude;
               DB.updateUserStatus(userData);
-          }).catch(console.log("error"))
+          })
+          .catch(error => {
+            console.log("Error updating location - ", error)
+          })
       }
     }, 60000)
    
@@ -62,7 +67,7 @@ $(document).ready(function() {
 function clickLogin() {
   $('#main-div').hide() //Hide the main login button
   
-  setLoadingScreen(true) //set loading
+  setLoadingScreen(true, "Logging In...", 20) //set loading
   
   getData() //Get user and matching users from database
   .then(displayData) //render data
@@ -88,11 +93,27 @@ function logout() {
   });
 }
 
-function setLoadingScreen(status) { //This function overlays (or removes) a full screen 'loading' div
+function setLoadingScreen(status, message, percent) { //This function overlays (or removes) a full screen 'loading' div
   if (status) {
+    if (message) {
+      $("#loadingScreenText").text(message)
+    } else {
+      $("#loadingScreenText").text('')
+    }
+
+    if (percent) {
+      $("#loadingScreenProgress").css("width", `${percent}%`);
+      $("#loadingScreenProgress").attr("aria-valuenow", `${percent}%`);
+    } else {
+      $("#loadingScreenProgress").css("width", `100%`);
+      $("#loadingScreenProgress").attr("aria-valuenow", `100%`);
+    }
+
+    $(".navbar").fadeTo("slow", 0, function(){})
     $('#loadingScreenDiv').show()
   } else {
     $('#loadingScreenDiv').hide()
+    $(".navbar").fadeTo("slow", 1, function(){})
   }
   return
 }
@@ -104,6 +125,7 @@ function setNewUserDialog() {
 }
 
 function getData() {
+  setLoadingScreen(true, "Setting your local area...", 40)
   let getFbAndLocationData = [getFacebookData(), getLocation()]
 
   return Promise.all(getFbAndLocationData) //wait for both FB and location data
@@ -111,12 +133,13 @@ function getData() {
     let userData = fbData
     window.USERID = userData.id
     $('#userBadge').attr('src', userData.dataURL) //Set user badge in navbar to profile pic
+    setLoadingScreen(true, "Finding nearby users...", 60)
     userData.location = {};
     userData.location.lat = locationData.coords.latitude;
     userData.location.lon = locationData.coords.longitude;
     return userData
   })
-  .then(DB.authenticate) //authenticate with DB
+  // .then(DB.authenticateAnon) //authenticate with DB - REMOVED to allow higher security auth with facebook
   .then(checkForNewUser) //check to see if user has no likes or catagories and if so alert them 
   .then(DB.updateUserInfo) //update user info from fb and location data in DB
   .then(updateUnreadMessageBadge) //UPDATE UNREAD MESSAGES BADGE
@@ -128,6 +151,7 @@ function getData() {
 }
 
 function displayData([matchingUsers, userDataDoc]) {
+  setLoadingScreen(true, "Done!", 100)
   let userData = userDataDoc.data()
 
   $('#login').hide()
@@ -182,6 +206,7 @@ function updateUnreadMessageBadge(userData) {
   let unreadMessagePromise = new Promise(function(resolve, reject) {
     DB.getUser(userData)
     .then(userDocument => {
+      setLoadingScreen(true, "Checking for new messages...", 80)
       let userDocumentData = userDocument.data();
 
       let unreadMessageCounter = 0;
@@ -365,11 +390,10 @@ function makeMatchDivs(matchedUsers) { //Create cards for matched users
             </div>`
   })
 
-  
   $('#matchCardParentContainer').html(htmlOut)
   $('.send-message').on('click', sendMessage)
   $('#phone-pictures').html(phonePictures.join(""))
-  // $('#phone-pictures').html(htmlOut)
+  $('.revolve-container').fadeTo("slow", 1, function(){})
 
   $('#addLikesToUser2').on('click', addLikesToUserModal)
   $(".rightArrow").on("click", { d: "n" }, rotate);
